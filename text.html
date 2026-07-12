@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0a0a0a;
+            font-family: Arial, sans-serif;
+            padding: 16px;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: #1a1a2e;
+            padding: 30px 20px;
+            border-radius: 20px;
+            box-shadow: 0 0 40px rgba(0,150,255,0.2);
+            text-align: center;
+            color: #fff;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+        .subtitle {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 25px;
+        }
+        .question {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            min-height: 60px;
+        }
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .option {
+            padding: 14px 20px;
+            background: #16213e;
+            border: 2px solid #2a3a6a;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            color: #fff;
+            font-size: 16px;
+        }
+        .option:hover {
+            background: #1a2a5a;
+            border-color: #00d4ff;
+            transform: scale(1.02);
+        }
+        .option.selected {
+            border-color: #00d4ff;
+            background: #0f3460;
+        }
+        .option.correct {
+            border-color: #00ff88;
+            background: #0a4a30;
+        }
+        .option.wrong {
+            border-color: #ff4444;
+            background: #4a1010;
+        }
+        .btn {
+            padding: 14px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #00d4ff;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            background: #00b8e6;
+            transform: scale(1.05);
+        }
+        .btn:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .result {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin-top: 20px;
+            padding: 20px;
+            background: #16213e;
+            border-radius: 12px;
+        }
+        .progress {
+            color: #888;
+            font-size: 14px;
+            margin-top: 15px;
+        }
+        .image-wrapper {
+            display: none;
+            margin: 15px 0;
+        }
+        .image-wrapper.show {
+            display: block;
+        }
+        img {
+            max-width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 0 30px rgba(0,150,255,0.3);
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="app">
+    <h1>🎯 Кто ты?</h1>
+    <p class="subtitle">Ответь на 5 вопросов и узнай результат</p>
+
+    <div id="quizArea">
+        <div class="image-wrapper" id="imageWrapper">
+            <img src="pavel.jpg" alt="Картинка">
+        </div>
+
+        <div class="question" id="questionText">Загрузка...</div>
+
+        <div class="options" id="optionsContainer"></div>
+
+        <button class="btn" id="nextBtn" disabled>Далее →</button>
+        <div class="progress" id="progressText">Вопрос 1 из 5</div>
+    </div>
+
+    <div id="resultArea" class="hidden">
+        <div class="result" id="resultText">Ты — 🔥</div>
+        <button class="btn" id="restartBtn" style="margin-top:20px;">🔄 Пройти заново</button>
+    </div>
+</div>
+
+<script>
+    // ===== ДАННЫЕ ТЕСТА =====
+    const questions = [
+        {
+            question: "Что ты делаешь в свободное время?",
+            options: ["Смотрю фильмы", "Гуляю с друзьями", "Сижу в интернете", "Занимаюсь спортом"],
+            correct: 2 // индекс правильного ответа (с 0)
+        },
+        {
+            question: "Какой цвет тебе нравится больше?",
+            options: ["Красный", "Синий", "Зелёный", "Чёрный"],
+            correct: 1
+        },
+        {
+            question: "Что ты выберешь на ужин?",
+            options: ["Пицца", "Салат", "Стейк", "Суши"],
+            correct: 0
+        },
+        {
+            question: "Какой жанр музыки предпочитаешь?",
+            options: ["Рок", "Поп", "Хип-хоп", "Классика"],
+            correct: 2
+        },
+        {
+            question: "Кем ты хочешь стать в будущем?",
+            options: ["Программист", "Врач", "Учитель", "Блогер"],
+            correct: 0
+        }
+    ];
+
+    // ===== ПЕРЕМЕННЫЕ =====
+    let currentQuestion = 0;
+    let score = 0;
+    let selectedOption = null;
+    let answered = false;
+
+    const questionText = document.getElementById('questionText');
+    const optionsContainer = document.getElementById('optionsContainer');
+    const nextBtn = document.getElementById('nextBtn');
+    const progressText = document.getElementById('progressText');
+    const resultArea = document.getElementById('resultArea');
+    const quizArea = document.getElementById('quizArea');
+    const resultText = document.getElementById('resultText');
+    const restartBtn = document.getElementById('restartBtn');
+    const imageWrapper = document.getElementById('imageWrapper');
+
+    // ===== ЗВУК =====
+    let audioContext;
+    let gainNode;
+    let audio;
+
+    function initAudio() {
+        try {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audio = new Audio('ara.mp3');
+            const track = audioContext.createMediaElementSource(audio);
+            gainNode = audioContext.createGain();
+            gainNode.gain.value = 10.0;
+            track.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+        } catch(e) {
+            audio = new Audio('ara.mp3');
+            audio.volume = 1.0;
+        }
+    }
+
+    function playSound() {
+        if (!audio) initAudio();
+        if (audioContext && audioContext.state === 'suspended') {
+            audioContext.resume();
+        }
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(() => {});
+        }
+    }
+
+    // ===== ПОКАЗАТЬ ВОПРОС =====
+    function showQuestion() {
+        const q = questions[currentQuestion];
+        questionText.textContent = q.question;
+        progressText.textContent = `Вопрос ${currentQuestion + 1} из ${questions.length}`;
+        selectedOption = null;
+        answered = false;
+        nextBtn.disabled = true;
+
+        optionsContainer.innerHTML = '';
+        q.options.forEach((text, index) => {
+            const div = document.createElement('div');
+            div.className = 'option';
+            div.textContent = text;
+            div.dataset.index = index;
+            div.addEventListener('click', () => selectOption(index));
+            optionsContainer.appendChild(div);
+        });
+
+        // Показываем картинку на первом вопросе
+        if (currentQuestion === 0) {
+            imageWrapper.classList.add('show');
+        }
+    }
+
+    // ===== ВЫБОР ОТВЕТА =====
+    function selectOption(index) {
+        if (answered) return;
+        selectedOption = index;
+        answered = true;
+        nextBtn.disabled = false;
+
+        const options = optionsContainer.querySelectorAll('.option');
+        options.forEach((el, i) => {
+            el.classList.remove('selected');
+            if (i === index) {
+                el.classList.add('selected');
+            }
+        });
+    }
+
+    // ===== СЛЕДУЮЩИЙ ВОПРОС =====
+    function nextQuestion() {
+        const q = questions[currentQuestion];
+        if (selectedOption === q.correct) {
+            score++;
+        }
+
+        // Звук при правильном ответе
+        if (selectedOption === q.correct) {
+            playSound();
+        }
+
+        currentQuestion++;
+
+        if (currentQuestion < questions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    // ===== РЕЗУЛЬТАТ =====
+    function showResult() {
+        quizArea.classList.add('hidden');
+        resultArea.classList.remove('hidden');
+
+        const percent = Math.round((score / questions.length) * 100);
+        let emoji = '🔥';
+        let label = 'Ты — эксперт!';
+        if (percent <= 40) { emoji = '🤔'; label = 'Ты — исследователь!'; }
+        else if (percent <= 60) { emoji = '😎'; label = 'Ты — середнячок!'; }
+        else if (percent <= 80) { emoji = '⭐'; label = 'Ты — умница!'; }
+        else { emoji = '🏆'; label = 'Ты — гений!'; }
+
+        resultText.innerHTML = `
+            ${emoji} ${label}<br>
+            <span style="font-size:18px;color:#aaa;">${score} из ${questions.length} правильных (${percent}%)</span>
+        `;
+
+        // Звук в конце
+        playSound();
+    }
+
+    // ===== РЕСТАРТ =====
+    function restart() {
+        currentQuestion = 0;
+        score = 0;
+        resultArea.classList.add('hidden');
+        quizArea.classList.remove('hidden');
+        showQuestion();
+    }
+
+    // ===== СОБЫТИЯ =====
+    nextBtn.addEventListener('click', nextQuestion);
+    restartBtn.addEventListener('click', restart);
+
+    // ===== ЗАПУСК =====
+    window.addEventListener('load', function() {
+        showQuestion();
+        setTimeout(initAudio, 500);
+    });
+</script>
+</body>
+</html>
