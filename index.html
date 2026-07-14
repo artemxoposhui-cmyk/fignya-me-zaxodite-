@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Богатство · Бессмертие · Любовь</title>
+    <title>🌈 Радужный тест · кто ты?</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            user-select: none;
         }
 
         body {
@@ -16,320 +18,545 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(circle at 30% 20%, #141024, #08060f);
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0a12;
             padding: 20px;
+            overflow: hidden;
+        }
+
+        /* Анимированный радужный фон */
+        .rainbow-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            background: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            background-size: 600% 600%;
+            animation: rainbowMove 12s ease infinite;
+            opacity: 0.15;
+        }
+
+        @keyframes rainbowMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Дополнительные плавающие радужные шары */
+        .float-balls {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .ball {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.25;
+            animation: floatBall 20s infinite alternate ease-in-out;
+        }
+        .ball:nth-child(1) { width: 300px; height: 300px; background: #ff4d4d; top: -10%; left: -10%; animation-duration: 18s; }
+        .ball:nth-child(2) { width: 400px; height: 400px; background: #4dff4d; bottom: -20%; right: -10%; animation-duration: 22s; animation-delay: 2s; }
+        .ball:nth-child(3) { width: 250px; height: 250px; background: #4d4dff; top: 40%; left: 30%; animation-duration: 25s; animation-delay: 4s; }
+        .ball:nth-child(4) { width: 350px; height: 350px; background: #ff4dff; bottom: 20%; left: -5%; animation-duration: 20s; animation-delay: 1s; }
+
+        @keyframes floatBall {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, -60px) scale(1.2); }
         }
 
         .container {
-            background: rgba(255, 255, 255, 0.04);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 56px;
-            padding: 48px 56px;
-            max-width: 500px;
+            position: relative;
+            z-index: 10;
+            background: rgba(20, 20, 30, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 40px 32px;
+            max-width: 600px;
             width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
             transition: 0.3s;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
         }
 
-        h1 {
+        .progress {
             text-align: center;
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: rgba(255, 255, 255, 0.25);
+            margin-bottom: 20px;
             font-weight: 300;
-            font-size: 22px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.15);
-            margin-bottom: 40px;
         }
 
-        .slider-group {
-            margin-bottom: 36px;
-        }
-
-        .slider-group:last-of-type {
-            margin-bottom: 0;
-        }
-
-        .slider-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .slider-label {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 22px;
-            font-weight: 600;
+        .question {
+            font-size: 26px;
+            font-weight: 700;
             color: #fff;
+            margin-bottom: 30px;
+            text-align: center;
+            line-height: 1.4;
+            text-shadow: 0 0 30px rgba(255,255,255,0.05);
         }
 
-        .slider-label .emoji {
-            font-size: 28px;
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
         }
 
-        .slider-value {
+        .option {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 60px;
+            padding: 16px 24px;
             font-size: 20px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.6);
-            min-width: 40px;
-            text-align: right;
-        }
-
-        /* Кастомный ползунок */
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 6px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.12);
-            outline: none;
-            transition: background 0.2s, opacity 0.3s;
+            font-weight: 500;
+            color: #ddd;
             cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            backdrop-filter: blur(4px);
         }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            transition: 0.15s;
-            border: 2px solid transparent;
+        .option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.2);
         }
 
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.12);
+        .option.selected {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ff7eb3;
+            box-shadow: 0 0 30px rgba(255, 126, 179, 0.2);
+            color: #fff;
+            transform: scale(1.02);
         }
 
-        input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #fff;
-            cursor: pointer;
+        .next-btn-wrapper {
+            position: relative;
+            height: 70px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #ff7eb3, #ff4d7a);
             border: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border-radius: 60px;
+            padding: 16px 48px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 40px rgba(255, 77, 122, 0.3);
+            transition: 0.2s;
+            letter-spacing: 1px;
+            position: absolute;
+            white-space: nowrap;
+            will-change: transform, opacity;
         }
 
-        /* Индивидуальные цвета */
-        #wealth-slider {
-            background: linear-gradient(to right, #f9d976, #f39c12);
-        }
-        #wealth-slider::-webkit-slider-thumb {
-            background: #f1c40f;
-            border-color: #f1c40f;
-        }
-        #wealth-slider::-moz-range-thumb {
-            background: #f1c40f;
+        .next-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 60px rgba(255, 77, 122, 0.5);
         }
 
-        #immortality-slider {
-            background: linear-gradient(to right, #a8e6ff, #4facfe);
-        }
-        #immortality-slider::-webkit-slider-thumb {
-            background: #4facfe;
-            border-color: #4facfe;
-        }
-        #immortality-slider::-moz-range-thumb {
-            background: #4facfe;
+        .next-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.15s;
         }
 
-        #love-slider {
-            background: linear-gradient(to right, #ff7eb3, #ff4d7a);
-        }
-        #love-slider::-webkit-slider-thumb {
-            background: #ff4d7a;
-            border-color: #ff4d7a;
-        }
-        #love-slider::-moz-range-thumb {
-            background: #ff4d7a;
+        .next-btn.jumping {
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Заблокированные ползунки */
-        input[type="range"]:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
+        .next-btn:active {
+            transform: scale(0.92);
         }
 
-        input[type="range"]:disabled::-webkit-slider-thumb {
-            transform: scale(0.85);
-            background: #888;
-            border-color: #888;
-            box-shadow: none;
+        .result {
+            text-align: center;
+            color: #fff;
+            padding: 20px 0;
         }
 
-        input[type="range"]:disabled::-moz-range-thumb {
-            transform: scale(0.85);
-            background: #888;
-            border-color: #888;
-            box-shadow: none;
+        .result h2 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #f9d976, #f39c12, #ff7eb3, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .disabled-label {
-            opacity: 0.4;
-            transition: opacity 0.3s;
+        .result p {
+            font-size: 18px;
+            opacity: 0.7;
+            line-height: 1.6;
         }
 
-        .disabled-value {
-            opacity: 0.4;
+        .result .emoji-big {
+            font-size: 64px;
+            display: block;
+            margin: 16px 0;
         }
 
-        /* Разделитель */
-        .divider {
-            height: 1px;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
-            margin: 30px 0 34px;
+        .restart-btn {
+            margin-top: 24px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 40px;
+            padding: 12px 32px;
+            font-size: 18px;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
         }
 
-        /* Адаптив */
+        .restart-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .counter {
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255,255,255,0.3);
+            margin-top: 12px;
+            letter-spacing: 1px;
+        }
+
         @media (max-width: 500px) {
-            .container {
-                padding: 30px 24px;
-                border-radius: 32px;
-            }
-            .slider-label {
-                font-size: 18px;
-            }
-            .slider-label .emoji {
-                font-size: 22px;
-            }
-            .slider-value {
-                font-size: 17px;
-                min-width: 34px;
-            }
-            input[type="range"]::-webkit-slider-thumb {
-                width: 20px;
-                height: 20px;
-            }
-            input[type="range"]::-moz-range-thumb {
-                width: 20px;
-                height: 20px;
-            }
+            .container { padding: 28px 20px; }
+            .question { font-size: 22px; }
+            .option { font-size: 17px; padding: 14px 20px; }
+            .next-btn { padding: 14px 32px; font-size: 19px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>✦ управление судьбой ✦</h1>
+    <div class="rainbow-bg"></div>
+    <div class="float-balls">
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+        <div class="ball"></div>
+    </div>
 
-        <!-- Богатство -->
-        <div class="slider-group" id="wealth-group">
-            <div class="slider-header">
-                <span class="slider-label">
-                    <span class="emoji">💰</span> Богатство
-                </span>
-                <span class="slider-value" id="wealth-value">50</span>
-            </div>
-            <input type="range" id="wealth-slider" min="0" max="100" value="50" />
+    <div class="container" id="app">
+        <!-- Прогресс -->
+        <div class="progress" id="progress">Вопрос 1 из 4</div>
+
+        <!-- Вопрос -->
+        <div class="question" id="question">Как ты проводишь свободное время?</div>
+
+        <!-- Варианты -->
+        <div class="options" id="options"></div>
+
+        <!-- Кнопка "Дальше" с контейнером -->
+        <div class="next-btn-wrapper" id="nextWrapper">
+            <button class="next-btn hidden" id="nextBtn">➜ Дальше</button>
         </div>
 
-        <!-- Бессмертие -->
-        <div class="slider-group" id="immortality-group">
-            <div class="slider-header">
-                <span class="slider-label">
-                    <span class="emoji">♾️</span> Бессмертие
-                </span>
-                <span class="slider-value" id="immortality-value">50</span>
-            </div>
-            <input type="range" id="immortality-slider" min="0" max="100" value="50" />
-        </div>
-
-        <div class="divider"></div>
-
-        <!-- Любовь -->
-        <div class="slider-group" id="love-group">
-            <div class="slider-header">
-                <span class="slider-label">
-                    <span class="emoji">❤️</span> Любовь
-                </span>
-                <span class="slider-value" id="love-value">0</span>
-            </div>
-            <input type="range" id="love-slider" min="0" max="100" value="0" />
-        </div>
-
-        <p style="text-align: center; margin-top: 28px; font-size: 13px; color: rgba(255,255,255,0.12); letter-spacing: 1px;">
-            сдвинь Любовь — Богатство и Бессмертие замирают
-        </p>
+        <!-- Счётчик перемещений (для отладки, но можно оставить) -->
+        <div class="counter" id="counterDisplay"></div>
     </div>
 
     <script>
         (function() {
-            const wealthSlider = document.getElementById('wealth-slider');
-            const immortalitySlider = document.getElementById('immortality-slider');
-            const loveSlider = document.getElementById('love-slider');
+            // ---------- ДАННЫЕ ТЕСТА ----------
+            const questions = [
+                {
+                    text: "Как ты проводишь свободное время?",
+                    options: [
+                        { text: "💻 Сижу в интернете", value: 'internet' },
+                        { text: "🌳 Гуляю на улице", value: 'walk' },
+                        { text: "😴 Сплю или ем", value: 'neutral' }
+                    ]
+                },
+                {
+                    text: "Что ты делаешь в выходные?",
+                    options: [
+                        { text: "📱 Зависаю в соцсетях", value: 'internet' },
+                        { text: "🚴 Еду на природу", value: 'walk' },
+                        { text: "🎮 Играю в игры", value: 'internet' },
+                        { text: "🏀 Встречаюсь с друзьями", value: 'walk' }
+                    ]
+                },
+                {
+                    text: "Как ты предпочитаешь общаться?",
+                    options: [
+                        { text: "📩 Онлайн (чат, звонки)", value: 'internet' },
+                        { text: "🗣️ Личные встречи", value: 'walk' }
+                    ]
+                },
+                {
+                    text: "Что тебе нравится больше?",
+                    options: [
+                        { text: "🧘 Тишина и дом", value: 'neutral' },
+                        { text: "🎉 Шумные компании", value: 'walk' },
+                        { text: "📚 Узнавать новое в сети", value: 'internet' }
+                    ]
+                }
+            ];
 
-            const wealthValue = document.getElementById('wealth-value');
-            const immortalityValue = document.getElementById('immortality-value');
-            const loveValue = document.getElementById('love-value');
+            // ---------- СОСТОЯНИЕ ----------
+            let currentQuestion = 0;
+            let answers = [];          // массив значений (internet / walk / neutral)
+            let selectedOptionIndex = -1;
+            let isWaitingForNext = false;    // идет процесс перемещения кнопки
+            let jumpCount = 0;          // сколько раз уже переместилась
+            let totalJumps = 0;          // сколько всего перемещений (генерируется)
+            let isGameFinished = false;
 
-            const wealthGroup = document.getElementById('wealth-group');
-            const immortalityGroup = document.getElementById('immortality-group');
+            const questionEl = document.getElementById('question');
+            const optionsEl = document.getElementById('options');
+            const nextBtn = document.getElementById('nextBtn');
+            const nextWrapper = document.getElementById('nextWrapper');
+            const progressEl = document.getElementById('progress');
+            const counterEl = document.getElementById('counterDisplay');
 
-            // Функция обновления отображения значений
-            function updateDisplay() {
-                wealthValue.textContent = wealthSlider.value;
-                immortalityValue.textContent = immortalitySlider.value;
-                loveValue.textContent = loveSlider.value;
+            // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
+            function shuffleArray(arr) {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
             }
 
-            // Функция блокировки / разблокировки
-            function toggleLock() {
-                const loveVal = parseInt(loveSlider.value, 10);
-                const blocked = loveVal > 0; // если любовь > 0, блокируем
+            // Генерация рандомного числа от min до max (включительно)
+            function randomInt(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
 
-                wealthSlider.disabled = blocked;
-                immortalitySlider.disabled = blocked;
+            // Переместить кнопку в случайное место внутри контейнера
+            function jumpButton() {
+                const wrapperRect = nextWrapper.getBoundingClientRect();
+                const btnRect = nextBtn.getBoundingClientRect();
+                const containerRect = document.querySelector('.container').getBoundingClientRect();
 
-                // Меняем стиль лейблов и значений (визуально)
-                const wealthLabel = wealthGroup.querySelector('.slider-label');
-                const wealthValSpan = wealthGroup.querySelector('.slider-value');
-                const immLabel = immortalityGroup.querySelector('.slider-label');
-                const immValSpan = immortalityGroup.querySelector('.slider-value');
+                // Доступная область внутри wrapper (с учетом отступов)
+                const pad = 20;
+                const maxX = wrapperRect.width - btnRect.width - pad * 2;
+                const maxY = wrapperRect.height - btnRect.height - pad * 2;
 
-                if (blocked) {
-                    wealthLabel.classList.add('disabled-label');
-                    wealthValSpan.classList.add('disabled-value');
-                    immLabel.classList.add('disabled-label');
-                    immValSpan.classList.add('disabled-value');
+                let x = randomInt(pad, Math.max(pad, maxX));
+                let y = randomInt(pad, Math.max(pad, maxY));
+
+                // Убедимся, что кнопка не выходит за границы wrapper (учитывая, что мы используем позиционирование absolute внутри wrapper)
+                // Но wrapper имеет position relative, поэтому left/top будут работать.
+                nextBtn.style.left = x + 'px';
+                nextBtn.style.top = y + 'px';
+                nextBtn.style.right = 'auto';
+                nextBtn.style.bottom = 'auto';
+                nextBtn.style.transform = 'translate(0, 0)';
+            }
+
+            // Запуск процесса "прыжков" кнопки
+            function startJumpSequence() {
+                if (isWaitingForNext) return;
+                isWaitingForNext = true;
+                // генерируем количество прыжков от 1 до 10
+                totalJumps = randomInt(1, 10);
+                jumpCount = 0;
+                counterEl.textContent = `🔄 Перемещений: 0 / ${totalJumps}`;
+
+                // Показываем кнопку и делаем первый прыжок
+                nextBtn.classList.remove('hidden');
+                nextBtn.classList.add('jumping');
+                // Устанавливаем начальную позицию в центре (как резерв)
+                nextBtn.style.left = '50%';
+                nextBtn.style.top = '50%';
+                nextBtn.style.transform = 'translate(-50%, -50%)';
+                // Через небольшую задержку начинаем прыгать
+                setTimeout(() => {
+                    doJump();
+                }, 200);
+            }
+
+            function doJump() {
+                if (jumpCount >= totalJumps) {
+                    // Завершили прыжки
+                    nextBtn.classList.remove('jumping');
+                    nextBtn.style.left = '50%';
+                    nextBtn.style.top = '50%';
+                    nextBtn.style.transform = 'translate(-50%, -50%)';
+                    counterEl.textContent = '';
+                    isWaitingForNext = false;
+                    // Переходим к следующему вопросу
+                    goToNextQuestion();
+                    return;
+                }
+
+                // Анимируем исчезновение
+                nextBtn.classList.add('hidden');
+                setTimeout(() => {
+                    // Меняем позицию
+                    jumpButton();
+                    // Показываем
+                    nextBtn.classList.remove('hidden');
+                    jumpCount++;
+                    counterEl.textContent = `🔄 Перемещений: ${jumpCount} / ${totalJumps}`;
+                    // Через паузу повторяем
+                    setTimeout(() => {
+                        doJump();
+                    }, 400 + randomInt(0, 300)); // случайная задержка
+                }, 250);
+            }
+
+            // Переход к следующему вопросу или результату
+            function goToNextQuestion() {
+                // Сохраняем ответ
+                if (selectedOptionIndex !== -1) {
+                    const selectedOption = questions[currentQuestion].options[selectedOptionIndex];
+                    answers.push(selectedOption.value);
                 } else {
-                    wealthLabel.classList.remove('disabled-label');
-                    wealthValSpan.classList.remove('disabled-value');
-                    immLabel.classList.remove('disabled-label');
-                    immValSpan.classList.remove('disabled-value');
+                    // если не выбран, то пропускаем (но по логике мы не даем нажать, пока не выбран)
+                }
+
+                currentQuestion++;
+                if (currentQuestion < questions.length) {
+                    showQuestion(currentQuestion);
+                } else {
+                    showResult();
                 }
             }
 
-            // Обработчики событий
-            wealthSlider.addEventListener('input', function() {
-                wealthValue.textContent = this.value;
-            });
+            // Показать вопрос
+            function showQuestion(index) {
+                const q = questions[index];
+                questionEl.textContent = q.text;
+                progressEl.textContent = `Вопрос ${index+1} из ${questions.length}`;
 
-            immortalitySlider.addEventListener('input', function() {
-                immortalityValue.textContent = this.value;
-            });
+                // Генерируем варианты
+                optionsEl.innerHTML = '';
+                q.options.forEach((opt, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'option';
+                    div.textContent = opt.text;
+                    div.dataset.index = idx;
+                    div.addEventListener('click', function() {
+                        if (isWaitingForNext) return; // нельзя менять во время прыжков
+                        // Убираем выделение у всех
+                        document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
+                        this.classList.add('selected');
+                        selectedOptionIndex = idx;
+                        // Показываем и запускаем прыжки кнопки
+                        if (!isWaitingForNext) {
+                            startJumpSequence();
+                        }
+                    });
+                    optionsEl.appendChild(div);
+                });
 
-            loveSlider.addEventListener('input', function() {
-                loveValue.textContent = this.value;
-                toggleLock();
-            });
+                // Сбрасываем выбор
+                selectedOptionIndex = -1;
+                // Скрываем кнопку
+                nextBtn.classList.add('hidden');
+                nextBtn.classList.remove('jumping');
+                nextBtn.style.left = '50%';
+                nextBtn.style.top = '50%';
+                nextBtn.style.transform = 'translate(-50%, -50%)';
+                counterEl.textContent = '';
+                isWaitingForNext = false;
+            }
 
-            // При загрузке привести в соответствие (если любовь не 0)
-            window.addEventListener('DOMContentLoaded', function() {
-                updateDisplay();
-                toggleLock();
-            });
+            // Показать результат
+            function showResult() {
+                // Подсчет
+                let internetCount = 0;
+                let walkCount = 0;
+                let neutralCount = 0;
+                answers.forEach(val => {
+                    if (val === 'internet') internetCount++;
+                    else if (val === 'walk') walkCount++;
+                    else neutralCount++;
+                });
 
-            // Также при любом изменении слайдеров обновляем цифры (на случай, если они меняются программно)
-            // Но у нас только через input, так что ок.
+                let resultText = '';
+                let emoji = '';
+                let description = '';
+
+                if (internetCount > walkCount && internetCount > neutralCount) {
+                    resultText = 'Ты — интернет-зависимый!';
+                    emoji = '💻🫠';
+                    description = 'Ты проводишь много времени в сети. Может, стоит выйти на улицу?';
+                } else if (walkCount > internetCount && walkCount > neutralCount) {
+                    resultText = 'Ты — активный и классный!';
+                    emoji = '🌳😎';
+                    description = 'Ты любишь гулять и общаться вживую. Так держать!';
+                } else if (neutralCount >= internetCount && neutralCount >= walkCount) {
+                    resultText = 'Ты — человек-загадка';
+                    emoji = '🧐🤷';
+                    description = 'Ты любишь и то, и другое, но чаще выбираешь покой.';
+                } else {
+                    // если равны
+                    resultText = 'Ты — гармоничная личность';
+                    emoji = '⚖️✨';
+                    description = 'У тебя баланс между интернетом и реальной жизнью!';
+                }
+
+                // Дополнительно можно сделать уникальные концовки
+                if (internetCount >= 3) {
+                    resultText = '💀 Ты — задрот!';
+                    emoji = '🎮🧟';
+                    description = 'Ты живёшь в сети. Пора перезагружаться в реальности.';
+                } else if (walkCount >= 3) {
+                    resultText = '🏆 Ты — король улиц!';
+                    emoji = '👑🌞';
+                    description = 'Ты обожаешь свежий воздух и движение. Ты — пример для подражания.';
+                }
+
+                // Показываем результат
+                questionEl.style.display = 'none';
+                optionsEl.style.display = 'none';
+                progressEl.textContent = '🏁 Тест завершён!';
+                nextBtn.classList.add('hidden');
+                counterEl.textContent = '';
+
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result';
+                resultDiv.innerHTML = `
+                    <span class="emoji-big">${emoji}</span>
+                    <h2>${resultText}</h2>
+                    <p>${description}</p>
+                    <p style="margin-top:16px; font-size:14px; opacity:0.4;">
+                        Интернет: ${internetCount} · Гулянки: ${walkCount} · Нейтрально: ${neutralCount}
+                    </p>
+                    <button class="restart-btn" id="restartBtn">🔄 Пройти заново</button>
+                `;
+                document.querySelector('.container').appendChild(resultDiv);
+
+                // Обработчик рестарта
+                document.getElementById('restartBtn').addEventListener('click', function() {
+                    location.reload();
+                });
+
+                isGameFinished = true;
+            }
+
+            // ---------- ИНИЦИАЛИЗАЦИЯ ----------
+            function init() {
+                // Перемешиваем варианты в вопросах (опционально)
+                // Можно оставить как есть
+                showQuestion(0);
+            }
+
+            init();
         })();
     </script>
 </body>
