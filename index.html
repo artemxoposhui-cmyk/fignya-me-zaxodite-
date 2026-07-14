@@ -3,394 +3,333 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Богатство, Бессмертие, Любовь</title>
+    <title>Богатство · Бессмертие · Любовь</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
         }
 
         body {
             min-height: 100vh;
-            background: radial-gradient(circle at 20% 30%, #0d0b1a, #04030a);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: radial-gradient(circle at 30% 20%, #141024, #08060f);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             padding: 20px;
         }
 
         .container {
-            position: relative;
-            width: 800px;
-            max-width: 100%;
-            height: 600px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 48px;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 56px;
+            padding: 48px 56px;
+            max-width: 500px;
+            width: 100%;
             border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-            overflow: hidden;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+            transition: 0.3s;
         }
 
-        .card {
-            position: absolute;
-            padding: 20px 32px;
-            border-radius: 60px;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            cursor: grab;
-            transition: box-shadow 0.25s, transform 0.15s;
+        h1 {
+            text-align: center;
+            font-weight: 300;
+            font-size: 22px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.15);
+            margin-bottom: 40px;
+        }
+
+        .slider-group {
+            margin-bottom: 36px;
+        }
+
+        .slider-group:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .slider-label {
             display: flex;
             align-items: center;
             gap: 12px;
-            z-index: 10;
-            will-change: transform, left, top;
-            background: rgba(20, 18, 40, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 22px;
+            font-weight: 600;
             color: #fff;
         }
 
-        .card:active {
-            cursor: grabbing;
-            transform: scale(0.96);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+        .slider-label .emoji {
+            font-size: 28px;
         }
 
-        .card .emoji {
-            font-size: 36px;
+        .slider-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+            min-width: 40px;
+            text-align: right;
         }
 
-        /* Богатство */
-        #wealth {
-            top: 80px;
-            left: 80px;
-            background: linear-gradient(145deg, #f9d976, #f39c12);
-            color: #1f1a2b;
-            border-color: #f1c40f;
-            box-shadow: 0 0 30px rgba(241, 196, 15, 0.25);
-        }
-
-        /* Бессмертие */
-        #immortality {
-            top: 80px;
-            right: 80px;
-            background: linear-gradient(145deg, #a8e6ff, #4facfe);
-            color: #0b1a2b;
-            border-color: #4facfe;
-            box-shadow: 0 0 30px rgba(79, 172, 254, 0.25);
-        }
-
-        /* Любовь (кнопка-переключатель) */
-        #love {
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(145deg, #ff7eb3, #ff4d7a);
-            color: #fff;
-            border-color: #ff4d7a;
-            box-shadow: 0 0 40px rgba(255, 77, 122, 0.35);
+        /* Кастомный ползунок */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.12);
+            outline: none;
+            transition: background 0.2s, opacity 0.3s;
             cursor: pointer;
-            padding: 16px 40px;
-            font-size: 30px;
-            z-index: 20;
-            transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        #love:hover {
-            transform: translateX(-50%) scale(1.04);
-            box-shadow: 0 0 60px rgba(255, 77, 122, 0.6);
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: 0.15s;
+            border: 2px solid transparent;
         }
 
-        #love:active {
-            transform: translateX(-50%) scale(0.94);
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.12);
         }
 
-        /* Анимация возврата */
-        .returning {
-            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1),
-                top 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #fff;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
 
-        /* Подпись под любовью */
-        .love-hint {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255, 255, 255, 0.2);
-            font-size: 14px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 300;
-            z-index: 0;
-            pointer-events: none;
-            white-space: nowrap;
+        /* Индивидуальные цвета */
+        #wealth-slider {
+            background: linear-gradient(to right, #f9d976, #f39c12);
+        }
+        #wealth-slider::-webkit-slider-thumb {
+            background: #f1c40f;
+            border-color: #f1c40f;
+        }
+        #wealth-slider::-moz-range-thumb {
+            background: #f1c40f;
+        }
+
+        #immortality-slider {
+            background: linear-gradient(to right, #a8e6ff, #4facfe);
+        }
+        #immortality-slider::-webkit-slider-thumb {
+            background: #4facfe;
+            border-color: #4facfe;
+        }
+        #immortality-slider::-moz-range-thumb {
+            background: #4facfe;
+        }
+
+        #love-slider {
+            background: linear-gradient(to right, #ff7eb3, #ff4d7a);
+        }
+        #love-slider::-webkit-slider-thumb {
+            background: #ff4d7a;
+            border-color: #ff4d7a;
+        }
+        #love-slider::-moz-range-thumb {
+            background: #ff4d7a;
+        }
+
+        /* Заблокированные ползунки */
+        input[type="range"]:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
+        input[type="range"]:disabled::-webkit-slider-thumb {
+            transform: scale(0.85);
+            background: #888;
+            border-color: #888;
+            box-shadow: none;
+        }
+
+        input[type="range"]:disabled::-moz-range-thumb {
+            transform: scale(0.85);
+            background: #888;
+            border-color: #888;
+            box-shadow: none;
+        }
+
+        .disabled-label {
+            opacity: 0.4;
+            transition: opacity 0.3s;
+        }
+
+        .disabled-value {
+            opacity: 0.4;
+        }
+
+        /* Разделитель */
+        .divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
+            margin: 30px 0 34px;
         }
 
         /* Адаптив */
-        @media (max-width: 700px) {
+        @media (max-width: 500px) {
             .container {
-                height: 500px;
+                padding: 30px 24px;
+                border-radius: 32px;
             }
-            .card {
-                font-size: 22px;
-                padding: 14px 24px;
-            }
-            .card .emoji {
-                font-size: 28px;
-            }
-            #love {
-                font-size: 24px;
-                padding: 12px 28px;
-                bottom: 60px;
-            }
-            #wealth {
-                top: 40px;
-                left: 30px;
-            }
-            #immortality {
-                top: 40px;
-                right: 30px;
-            }
-            .love-hint {
-                bottom: 18px;
-                font-size: 11px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                height: 400px;
-                border-radius: 28px;
-            }
-            .card {
+            .slider-label {
                 font-size: 18px;
-                padding: 10px 18px;
-                border-radius: 40px;
             }
-            .card .emoji {
+            .slider-label .emoji {
                 font-size: 22px;
             }
-            #love {
-                font-size: 20px;
-                padding: 10px 20px;
-                bottom: 50px;
+            .slider-value {
+                font-size: 17px;
+                min-width: 34px;
             }
-            #wealth {
-                top: 30px;
-                left: 20px;
+            input[type="range"]::-webkit-slider-thumb {
+                width: 20px;
+                height: 20px;
             }
-            #immortality {
-                top: 30px;
-                right: 20px;
+            input[type="range"]::-moz-range-thumb {
+                width: 20px;
+                height: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="container">
+    <div class="container">
+        <h1>✦ управление судьбой ✦</h1>
+
         <!-- Богатство -->
-        <div class="card" id="wealth">
-            <span class="emoji">💰</span> Богатство
+        <div class="slider-group" id="wealth-group">
+            <div class="slider-header">
+                <span class="slider-label">
+                    <span class="emoji">💰</span> Богатство
+                </span>
+                <span class="slider-value" id="wealth-value">50</span>
+            </div>
+            <input type="range" id="wealth-slider" min="0" max="100" value="50" />
         </div>
 
         <!-- Бессмертие -->
-        <div class="card" id="immortality">
-            <span class="emoji">♾️</span> Бессмертие
+        <div class="slider-group" id="immortality-group">
+            <div class="slider-header">
+                <span class="slider-label">
+                    <span class="emoji">♾️</span> Бессмертие
+                </span>
+                <span class="slider-value" id="immortality-value">50</span>
+            </div>
+            <input type="range" id="immortality-slider" min="0" max="100" value="50" />
         </div>
 
-        <!-- Любовь (кнопка возврата) -->
-        <div class="card" id="love">
-            <span class="emoji">❤️</span> Любовь
+        <div class="divider"></div>
+
+        <!-- Любовь -->
+        <div class="slider-group" id="love-group">
+            <div class="slider-header">
+                <span class="slider-label">
+                    <span class="emoji">❤️</span> Любовь
+                </span>
+                <span class="slider-value" id="love-value">0</span>
+            </div>
+            <input type="range" id="love-slider" min="0" max="100" value="0" />
         </div>
 
-        <div class="love-hint">• нажми, чтобы вернуть всё на место •</div>
+        <p style="text-align: center; margin-top: 28px; font-size: 13px; color: rgba(255,255,255,0.12); letter-spacing: 1px;">
+            сдвинь Любовь — Богатство и Бессмертие замирают
+        </p>
     </div>
 
     <script>
         (function() {
-            const container = document.getElementById('container');
-            const wealth = document.getElementById('wealth');
-            const immortality = document.getElementById('immortality');
-            const loveBtn = document.getElementById('love');
+            const wealthSlider = document.getElementById('wealth-slider');
+            const immortalitySlider = document.getElementById('immortality-slider');
+            const loveSlider = document.getElementById('love-slider');
 
-            // Храним начальные позиции (в процентах от размеров контейнера)
-            // чтобы возвращать с учётом ресайза
-            let initialPos = {};
+            const wealthValue = document.getElementById('wealth-value');
+            const immortalityValue = document.getElementById('immortality-value');
+            const loveValue = document.getElementById('love-value');
 
-            function saveInitialPositions() {
-                const rect = container.getBoundingClientRect();
-                // wealth
-                const wRect = wealth.getBoundingClientRect();
-                initialPos.wealth = {
-                    left: (wRect.left - rect.left) / rect.width * 100,
-                    top: (wRect.top - rect.top) / rect.height * 100,
-                };
-                // immortality
-                const iRect = immortality.getBoundingClientRect();
-                initialPos.immortality = {
-                    left: (iRect.left - rect.left) / rect.width * 100,
-                    top: (iRect.top - rect.top) / rect.height * 100,
-                };
-                // love не перемещается, не сохраняем
+            const wealthGroup = document.getElementById('wealth-group');
+            const immortalityGroup = document.getElementById('immortality-group');
+
+            // Функция обновления отображения значений
+            function updateDisplay() {
+                wealthValue.textContent = wealthSlider.value;
+                immortalityValue.textContent = immortalitySlider.value;
+                loveValue.textContent = loveSlider.value;
             }
 
-            // Устанавливаем позиции из процентов
-            function setElementPosition(el, pos) {
-                el.style.left = pos.left + '%';
-                el.style.top = pos.top + '%';
-                // убираем right если был
-                el.style.right = 'auto';
-            }
+            // Функция блокировки / разблокировки
+            function toggleLock() {
+                const loveVal = parseInt(loveSlider.value, 10);
+                const blocked = loveVal > 0; // если любовь > 0, блокируем
 
-            // Возвращаем wealth и immortality на исходные позиции с анимацией
-            function returnToStart() {
-                // Добавляем класс для анимации
-                wealth.classList.add('returning');
-                immortality.classList.add('returning');
+                wealthSlider.disabled = blocked;
+                immortalitySlider.disabled = blocked;
 
-                setElementPosition(wealth, initialPos.wealth);
-                setElementPosition(immortality, initialPos.immortality);
+                // Меняем стиль лейблов и значений (визуально)
+                const wealthLabel = wealthGroup.querySelector('.slider-label');
+                const wealthValSpan = wealthGroup.querySelector('.slider-value');
+                const immLabel = immortalityGroup.querySelector('.slider-label');
+                const immValSpan = immortalityGroup.querySelector('.slider-value');
 
-                // Убираем класс после окончания анимации, чтобы не мешать перетаскиванию
-                setTimeout(() => {
-                    wealth.classList.remove('returning');
-                    immortality.classList.remove('returning');
-                }, 900);
-            }
-
-            // Сохраняем начальные позиции после загрузки и при ресайзе
-            function updateInitialPositions() {
-                saveInitialPositions();
-                // также применяем их, чтобы при ресайзе элементы не сбивались
-                // но если они уже были перемещены, мы не хотим сбрасывать их позиции,
-                // только сохраняем новые "начальные" координаты для будущего возврата.
-                // Однако при первом запуске нужно установить их в эти позиции.
-                // Проверим, если у элементов ещё нет стилей left/top, установим.
-                if (!wealth.style.left && !wealth.style.top) {
-                    setElementPosition(wealth, initialPos.wealth);
-                }
-                if (!immortality.style.left && !immortality.style.top) {
-                    setElementPosition(immortality, initialPos.immortality);
+                if (blocked) {
+                    wealthLabel.classList.add('disabled-label');
+                    wealthValSpan.classList.add('disabled-value');
+                    immLabel.classList.add('disabled-label');
+                    immValSpan.classList.add('disabled-value');
+                } else {
+                    wealthLabel.classList.remove('disabled-label');
+                    wealthValSpan.classList.remove('disabled-value');
+                    immLabel.classList.remove('disabled-label');
+                    immValSpan.classList.remove('disabled-value');
                 }
             }
 
-            // Перетаскивание (dragging) для wealth и immortality
-            function makeDraggable(element) {
-                let isDragging = false;
-                let startX, startY, startLeft, startTop;
+            // Обработчики событий
+            wealthSlider.addEventListener('input', function() {
+                wealthValue.textContent = this.value;
+            });
 
-                const onStart = (e) => {
-                    // если нажата не левая кнопка мыши
-                    if (e.type === 'mousedown' && e.button !== 0) return;
-                    // запрещаем перетаскивание, если элемент в процессе возврата
-                    if (element.classList.contains('returning')) return;
+            immortalitySlider.addEventListener('input', function() {
+                immortalityValue.textContent = this.value;
+            });
 
-                    isDragging = true;
-                    const rect = container.getBoundingClientRect();
-                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                    if (clientX == null) return;
+            loveSlider.addEventListener('input', function() {
+                loveValue.textContent = this.value;
+                toggleLock();
+            });
 
-                    const elRect = element.getBoundingClientRect();
-                    startX = clientX - elRect.left;
-                    startY = clientY - elRect.top;
+            // При загрузке привести в соответствие (если любовь не 0)
+            window.addEventListener('DOMContentLoaded', function() {
+                updateDisplay();
+                toggleLock();
+            });
 
-                    // текущие позиции в пикселях относительно контейнера
-                    const containerRect = container.getBoundingClientRect();
-                    const leftPx = elRect.left - containerRect.left;
-                    const topPx = elRect.top - containerRect.top;
-                    // сохраняем их в процентах
-                    startLeft = (leftPx / containerRect.width) * 100;
-                    startTop = (topPx / containerRect.height) * 100;
-
-                    element.style.transition = 'none'; // убираем анимацию при перетаскивании
-                    element.style.cursor = 'grabbing';
-                    element.classList.remove('returning');
-
-                    e.preventDefault();
-                };
-
-                const onMove = (e) => {
-                    if (!isDragging) return;
-                    const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                    const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                    if (clientX == null) return;
-
-                    const containerRect = container.getBoundingClientRect();
-                    // вычисляем новые проценты
-                    let newLeftPx = clientX - containerRect.left - startX;
-                    let newTopPx = clientY - containerRect.top - startY;
-
-                    // ограничиваем, чтобы не выходил за пределы контейнера (с учётом размеров элемента)
-                    const elWidth = element.offsetWidth;
-                    const elHeight = element.offsetHeight;
-                    const maxLeft = containerRect.width - elWidth;
-                    const maxTop = containerRect.height - elHeight;
-                    newLeftPx = Math.min(Math.max(newLeftPx, 0), maxLeft);
-                    newTopPx = Math.min(Math.max(newTopPx, 0), maxTop);
-
-                    const newLeft = (newLeftPx / containerRect.width) * 100;
-                    const newTop = (newTopPx / containerRect.height) * 100;
-
-                    element.style.left = newLeft + '%';
-                    element.style.top = newTop + '%';
-                    element.style.right = 'auto';
-
-                    e.preventDefault();
-                };
-
-                const onEnd = () => {
-                    if (isDragging) {
-                        isDragging = false;
-                        element.style.cursor = 'grab';
-                        element.style.transition = ''; // восстанавливаем
-                    }
-                };
-
-                // Мышь
-                element.addEventListener('mousedown', onStart);
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onEnd);
-
-                // Тач
-                element.addEventListener('touchstart', onStart, { passive: false });
-                document.addEventListener('touchmove', onMove, { passive: false });
-                document.addEventListener('touchend', onEnd);
-                document.addEventListener('touchcancel', onEnd);
-            }
-
-            // Инициализация
-            function init() {
-                // Делаем перетаскиваемыми
-                makeDraggable(wealth);
-                makeDraggable(immortality);
-
-                // Сохраняем начальные позиции
-                updateInitialPositions();
-
-                // При клике на любовь возвращаем
-                loveBtn.addEventListener('click', returnToStart);
-
-                // При ресайзе обновляем начальные позиции (но не сбрасываем текущие)
-                window.addEventListener('resize', () => {
-                    // обновляем сохранённые позиции (чтобы возврат работал корректно)
-                    saveInitialPositions();
-                });
-            }
-
-            // Ждём загрузки
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
-
+            // Также при любом изменении слайдеров обновляем цифры (на случай, если они меняются программно)
+            // Но у нас только через input, так что ок.
         })();
     </script>
 </body>
