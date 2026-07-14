@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🌈 Радужный тест · кто ты?</title>
+    <title>🌈 Радужный тест · троллинг-версия</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +23,7 @@
             overflow: hidden;
         }
 
-        /* Анимированный радужный фон */
+        /* Яркая радуга */
         .rainbow-bg {
             position: fixed;
             top: 0;
@@ -31,10 +31,12 @@
             right: 0;
             bottom: 0;
             z-index: 0;
-            background: linear-gradient(135deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8b00ff);
+            background: linear-gradient(135deg, 
+                #ffb3b3, #ffd9b3, #ffffb3, #b3ffb3, #b3b3ff, #e6b3ff, #ffb3e6
+            );
             background-size: 600% 600%;
             animation: rainbowMove 12s ease infinite;
-            opacity: 0.15;
+            opacity: 0.35; /* ярче */
         }
 
         @keyframes rainbowMove {
@@ -43,7 +45,7 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Дополнительные плавающие радужные шары */
+        /* Плавающие светлые шары */
         .float-balls {
             position: fixed;
             top: 0;
@@ -57,14 +59,14 @@
         .ball {
             position: absolute;
             border-radius: 50%;
-            filter: blur(60px);
-            opacity: 0.25;
+            filter: blur(70px);
+            opacity: 0.35;
             animation: floatBall 20s infinite alternate ease-in-out;
         }
-        .ball:nth-child(1) { width: 300px; height: 300px; background: #ff4d4d; top: -10%; left: -10%; animation-duration: 18s; }
-        .ball:nth-child(2) { width: 400px; height: 400px; background: #4dff4d; bottom: -20%; right: -10%; animation-duration: 22s; animation-delay: 2s; }
-        .ball:nth-child(3) { width: 250px; height: 250px; background: #4d4dff; top: 40%; left: 30%; animation-duration: 25s; animation-delay: 4s; }
-        .ball:nth-child(4) { width: 350px; height: 350px; background: #ff4dff; bottom: 20%; left: -5%; animation-duration: 20s; animation-delay: 1s; }
+        .ball:nth-child(1) { width: 300px; height: 300px; background: #ff9999; top: -10%; left: -10%; animation-duration: 18s; }
+        .ball:nth-child(2) { width: 400px; height: 400px; background: #99ff99; bottom: -20%; right: -10%; animation-duration: 22s; animation-delay: 2s; }
+        .ball:nth-child(3) { width: 250px; height: 250px; background: #9999ff; top: 40%; left: 30%; animation-duration: 25s; animation-delay: 4s; }
+        .ball:nth-child(4) { width: 350px; height: 350px; background: #ff99ff; bottom: 20%; left: -5%; animation-duration: 20s; animation-delay: 1s; }
 
         @keyframes floatBall {
             0% { transform: translate(0, 0) scale(1); }
@@ -74,15 +76,15 @@
         .container {
             position: relative;
             z-index: 10;
-            background: rgba(20, 20, 30, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: rgba(20, 20, 30, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 48px;
             padding: 40px 32px;
             max-width: 600px;
             width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
             transition: 0.3s;
             min-height: 400px;
             display: flex;
@@ -93,7 +95,7 @@
             text-align: center;
             font-size: 14px;
             letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.25);
+            color: rgba(255, 255, 255, 0.5);
             margin-bottom: 20px;
             font-weight: 300;
         }
@@ -105,7 +107,7 @@
             margin-bottom: 30px;
             text-align: center;
             line-height: 1.4;
-            text-shadow: 0 0 30px rgba(255,255,255,0.05);
+            text-shadow: 0 0 30px rgba(255,255,255,0.1);
         }
 
         .options {
@@ -116,13 +118,13 @@
         }
 
         .option {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 60px;
             padding: 16px 24px;
             font-size: 20px;
             font-weight: 500;
-            color: #ddd;
+            color: #eee;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
@@ -130,15 +132,15 @@
         }
 
         .option:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.18);
             transform: scale(1.02);
-            border-color: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.25);
         }
 
         .option.selected {
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             border-color: #ff7eb3;
-            box-shadow: 0 0 30px rgba(255, 126, 179, 0.2);
+            box-shadow: 0 0 40px rgba(255, 126, 179, 0.3);
             color: #fff;
             transform: scale(1.02);
         }
@@ -152,7 +154,9 @@
             align-items: center;
         }
 
+        /* Кнопка теперь позиционируется фиксированно относительно окна */
         .next-btn {
+            position: fixed;  /* вместо absolute в контейнере */
             background: linear-gradient(135deg, #ff7eb3, #ff4d7a);
             border: none;
             border-radius: 60px;
@@ -161,17 +165,18 @@
             font-weight: 700;
             color: #fff;
             cursor: pointer;
-            box-shadow: 0 0 40px rgba(255, 77, 122, 0.3);
-            transition: 0.2s;
+            box-shadow: 0 0 40px rgba(255, 77, 122, 0.4);
+            transition: opacity 0.2s, transform 0.15s, left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             letter-spacing: 1px;
-            position: absolute;
             white-space: nowrap;
-            will-change: transform, opacity;
+            z-index: 9999;
+            will-change: transform, left, top;
+            transform: translate(-50%, -50%); /* чтобы центрировать по заданным координатам */
         }
 
         .next-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 60px rgba(255, 77, 122, 0.5);
+            transform: translate(-50%, -50%) scale(1.05);
+            box-shadow: 0 0 60px rgba(255, 77, 122, 0.6);
         }
 
         .next-btn.hidden {
@@ -180,12 +185,8 @@
             transition: opacity 0.15s;
         }
 
-        .next-btn.jumping {
-            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
         .next-btn:active {
-            transform: scale(0.92);
+            transform: translate(-50%, -50%) scale(0.92);
         }
 
         .result {
@@ -205,7 +206,7 @@
 
         .result p {
             font-size: 18px;
-            opacity: 0.7;
+            opacity: 0.8;
             line-height: 1.6;
         }
 
@@ -217,8 +218,8 @@
 
         .restart-btn {
             margin-top: 24px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
             border-radius: 40px;
             padding: 12px 32px;
             font-size: 18px;
@@ -228,15 +229,7 @@
         }
 
         .restart-btn:hover {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .counter {
-            text-align: center;
-            font-size: 14px;
-            color: rgba(255,255,255,0.3);
-            margin-top: 12px;
-            letter-spacing: 1px;
+            background: rgba(255,255,255,0.25);
         }
 
         @media (max-width: 500px) {
@@ -266,14 +259,14 @@
         <!-- Варианты -->
         <div class="options" id="options"></div>
 
-        <!-- Кнопка "Дальше" с контейнером -->
+        <!-- Контейнер для кнопки (теперь не используется для позиционирования, но оставлен для совместимости) -->
         <div class="next-btn-wrapper" id="nextWrapper">
-            <button class="next-btn hidden" id="nextBtn">➜ Дальше</button>
+            <!-- Кнопка будет добавлена в body, чтобы быть поверх всего -->
         </div>
-
-        <!-- Счётчик перемещений (для отладки, но можно оставить) -->
-        <div class="counter" id="counterDisplay"></div>
     </div>
+
+    <!-- Кнопку будем вставлять прямо в body -->
+    <button class="next-btn hidden" id="nextBtn">➜ Дальше</button>
 
     <script>
         (function() {
@@ -315,94 +308,72 @@
 
             // ---------- СОСТОЯНИЕ ----------
             let currentQuestion = 0;
-            let answers = [];          // массив значений (internet / walk / neutral)
+            let answers = [];
             let selectedOptionIndex = -1;
-            let isWaitingForNext = false;    // идет процесс перемещения кнопки
-            let jumpCount = 0;          // сколько раз уже переместилась
-            let totalJumps = 0;          // сколько всего перемещений (генерируется)
+            let isWaitingForNext = false;
+            let jumpCount = 0;
+            let totalJumps = 0;
             let isGameFinished = false;
 
             const questionEl = document.getElementById('question');
             const optionsEl = document.getElementById('options');
             const nextBtn = document.getElementById('nextBtn');
-            const nextWrapper = document.getElementById('nextWrapper');
             const progressEl = document.getElementById('progress');
-            const counterEl = document.getElementById('counterDisplay');
 
             // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
-            function shuffleArray(arr) {
-                for (let i = arr.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [arr[i], arr[j]] = [arr[j], arr[i]];
-                }
-                return arr;
-            }
-
-            // Генерация рандомного числа от min до max (включительно)
             function randomInt(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             }
 
-            // Переместить кнопку в случайное место внутри контейнера
+            // Переместить кнопку в случайное место по всему экрану
             function jumpButton() {
-                const wrapperRect = nextWrapper.getBoundingClientRect();
                 const btnRect = nextBtn.getBoundingClientRect();
-                const containerRect = document.querySelector('.container').getBoundingClientRect();
+                const w = window.innerWidth;
+                const h = window.innerHeight;
 
-                // Доступная область внутри wrapper (с учетом отступов)
+                // Размеры кнопки
+                const btnW = btnRect.width || 200; // запас
+                const btnH = btnRect.height || 60;
+
+                // Случайные координаты с отступами, чтобы не вылезала
                 const pad = 20;
-                const maxX = wrapperRect.width - btnRect.width - pad * 2;
-                const maxY = wrapperRect.height - btnRect.height - pad * 2;
+                const left = randomInt(pad, w - btnW - pad);
+                const top = randomInt(pad, h - btnH - pad);
 
-                let x = randomInt(pad, Math.max(pad, maxX));
-                let y = randomInt(pad, Math.max(pad, maxY));
-
-                // Убедимся, что кнопка не выходит за границы wrapper (учитывая, что мы используем позиционирование absolute внутри wrapper)
-                // Но wrapper имеет position relative, поэтому left/top будут работать.
-                nextBtn.style.left = x + 'px';
-                nextBtn.style.top = y + 'px';
-                nextBtn.style.right = 'auto';
-                nextBtn.style.bottom = 'auto';
-                nextBtn.style.transform = 'translate(0, 0)';
+                nextBtn.style.left = left + 'px';
+                nextBtn.style.top = top + 'px';
             }
 
-            // Запуск процесса "прыжков" кнопки
+            // Запуск последовательности прыжков
             function startJumpSequence() {
                 if (isWaitingForNext) return;
                 isWaitingForNext = true;
-                // генерируем количество прыжков от 1 до 10
+
                 totalJumps = randomInt(1, 10);
                 jumpCount = 0;
-                counterEl.textContent = `🔄 Перемещений: 0 / ${totalJumps}`;
 
-                // Показываем кнопку и делаем первый прыжок
+                // Показываем кнопку
                 nextBtn.classList.remove('hidden');
-                nextBtn.classList.add('jumping');
-                // Устанавливаем начальную позицию в центре (как резерв)
-                nextBtn.style.left = '50%';
-                nextBtn.style.top = '50%';
-                nextBtn.style.transform = 'translate(-50%, -50%)';
-                // Через небольшую задержку начинаем прыгать
+                // Устанавливаем начальную позицию (центр экрана)
+                nextBtn.style.left = (window.innerWidth / 2) + 'px';
+                nextBtn.style.top = (window.innerHeight / 2) + 'px';
+
                 setTimeout(() => {
                     doJump();
-                }, 200);
+                }, 300);
             }
 
             function doJump() {
                 if (jumpCount >= totalJumps) {
                     // Завершили прыжки
-                    nextBtn.classList.remove('jumping');
-                    nextBtn.style.left = '50%';
-                    nextBtn.style.top = '50%';
-                    nextBtn.style.transform = 'translate(-50%, -50%)';
-                    counterEl.textContent = '';
+                    // Перемещаем в центр контейнера (но это не обязательно, можно оставить где есть)
+                    // Просто переходим к следующему вопросу
                     isWaitingForNext = false;
-                    // Переходим к следующему вопросу
                     goToNextQuestion();
                     return;
                 }
 
-                // Анимируем исчезновение
+                // Скрываем на мгновение
                 nextBtn.classList.add('hidden');
                 setTimeout(() => {
                     // Меняем позицию
@@ -410,22 +381,18 @@
                     // Показываем
                     nextBtn.classList.remove('hidden');
                     jumpCount++;
-                    counterEl.textContent = `🔄 Перемещений: ${jumpCount} / ${totalJumps}`;
                     // Через паузу повторяем
                     setTimeout(() => {
                         doJump();
-                    }, 400 + randomInt(0, 300)); // случайная задержка
-                }, 250);
+                    }, 400 + randomInt(0, 300));
+                }, 200);
             }
 
-            // Переход к следующему вопросу или результату
+            // Переход к следующему вопросу
             function goToNextQuestion() {
-                // Сохраняем ответ
                 if (selectedOptionIndex !== -1) {
                     const selectedOption = questions[currentQuestion].options[selectedOptionIndex];
                     answers.push(selectedOption.value);
-                } else {
-                    // если не выбран, то пропускаем (но по логике мы не даем нажать, пока не выбран)
                 }
 
                 currentQuestion++;
@@ -442,7 +409,6 @@
                 questionEl.textContent = q.text;
                 progressEl.textContent = `Вопрос ${index+1} из ${questions.length}`;
 
-                // Генерируем варианты
                 optionsEl.innerHTML = '';
                 q.options.forEach((opt, idx) => {
                     const div = document.createElement('div');
@@ -450,12 +416,10 @@
                     div.textContent = opt.text;
                     div.dataset.index = idx;
                     div.addEventListener('click', function() {
-                        if (isWaitingForNext) return; // нельзя менять во время прыжков
-                        // Убираем выделение у всех
+                        if (isWaitingForNext) return;
                         document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
                         this.classList.add('selected');
                         selectedOptionIndex = idx;
-                        // Показываем и запускаем прыжки кнопки
                         if (!isWaitingForNext) {
                             startJumpSequence();
                         }
@@ -463,33 +427,23 @@
                     optionsEl.appendChild(div);
                 });
 
-                // Сбрасываем выбор
                 selectedOptionIndex = -1;
                 // Скрываем кнопку
                 nextBtn.classList.add('hidden');
-                nextBtn.classList.remove('jumping');
-                nextBtn.style.left = '50%';
-                nextBtn.style.top = '50%';
-                nextBtn.style.transform = 'translate(-50%, -50%)';
-                counterEl.textContent = '';
+                // сбрасываем позицию (необязательно)
                 isWaitingForNext = false;
             }
 
             // Показать результат
             function showResult() {
-                // Подсчет
-                let internetCount = 0;
-                let walkCount = 0;
-                let neutralCount = 0;
+                let internetCount = 0, walkCount = 0, neutralCount = 0;
                 answers.forEach(val => {
                     if (val === 'internet') internetCount++;
                     else if (val === 'walk') walkCount++;
                     else neutralCount++;
                 });
 
-                let resultText = '';
-                let emoji = '';
-                let description = '';
+                let resultText = '', emoji = '', description = '';
 
                 if (internetCount > walkCount && internetCount > neutralCount) {
                     resultText = 'Ты — интернет-зависимый!';
@@ -504,13 +458,11 @@
                     emoji = '🧐🤷';
                     description = 'Ты любишь и то, и другое, но чаще выбираешь покой.';
                 } else {
-                    // если равны
                     resultText = 'Ты — гармоничная личность';
                     emoji = '⚖️✨';
                     description = 'У тебя баланс между интернетом и реальной жизнью!';
                 }
 
-                // Дополнительно можно сделать уникальные концовки
                 if (internetCount >= 3) {
                     resultText = '💀 Ты — задрот!';
                     emoji = '🎮🧟';
@@ -521,12 +473,10 @@
                     description = 'Ты обожаешь свежий воздух и движение. Ты — пример для подражания.';
                 }
 
-                // Показываем результат
                 questionEl.style.display = 'none';
                 optionsEl.style.display = 'none';
                 progressEl.textContent = '🏁 Тест завершён!';
                 nextBtn.classList.add('hidden');
-                counterEl.textContent = '';
 
                 const resultDiv = document.createElement('div');
                 resultDiv.className = 'result';
@@ -541,7 +491,6 @@
                 `;
                 document.querySelector('.container').appendChild(resultDiv);
 
-                // Обработчик рестарта
                 document.getElementById('restartBtn').addEventListener('click', function() {
                     location.reload();
                 });
@@ -551,8 +500,6 @@
 
             // ---------- ИНИЦИАЛИЗАЦИЯ ----------
             function init() {
-                // Перемешиваем варианты в вопросах (опционально)
-                // Можно оставить как есть
                 showQuestion(0);
             }
 
