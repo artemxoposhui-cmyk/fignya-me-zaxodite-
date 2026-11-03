@@ -48,11 +48,12 @@
   .small{font-size:12px;color:#888;text-align:center}
   .counter{text-align:center;font-size:28px;font-weight:bold;color:var(--accent);letter-spacing:2px;margin:8px 0;text-shadow:0 0 12px #00ffb366}
   .dodge-counter{position:absolute;top:8px;right:12px;font-size:13px;color:#8a8aac;z-index:10;pointer-events:none}
-  .progress-bar{height:8px;background:#10101d;border-radius:4px;overflow:hidden;margin-top:6px}
-  .progress-bar > div{height:100%;background:var(--accent);transition:width .2s;box-shadow:0 0 12px #00ffb3}
   @keyframes grow{from{transform:scale(1)}to{transform:scale(1.8)}}
   @keyframes shrink{from{transform:scale(1)}to{transform:scale(0)}}
   @keyframes slideLR{0%,100%{left:5%}50%{left:60%}}
+  .fail-screen{text-align:center;padding:30px 10px}
+  .fail-screen .big-x{font-size:44px;color:#ff3b5c;font-weight:bold;letter-spacing:4px;text-shadow:0 0 20px #ff3b5c88}
+  .fail-screen .sub{font-size:13px;color:#888;margin-top:10px;letter-spacing:1px}
   #err{white-space:pre-wrap;color:#ffb3c0;background:#2a0e14;border:1px solid #ff3b5c;padding:14px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none}
 </style>
 </head>
@@ -63,7 +64,7 @@
   <div id="progress"></div>
   <main id="stage"></main>
   <div class="footer">
-    <span>Без подсказок. Удачи.</span>
+    <span style="color:#ff3b5c">Ошибка — всё сначала.</span>
     <button class="toggle" id="soundBtn">Звук: вкл</button>
   </div>
 </div>
@@ -131,8 +132,36 @@ try {
     stage.append(h);
     return h;
   }
-  function wrong(){
+  function softWrong(){
+    // для таймеров/счётчиков — только звук, без рестарта
     sfx.wrong();
+  }
+  function fail(){
+    // полный рестарт с первого вопроса
+    if(answered) return;
+    answered = true;
+    sfx.wrong();
+    clearAllTimers();
+    stage.innerHTML = "";
+    var box = document.createElement("div");
+    box.className = "fail-screen";
+    box.innerHTML = '<div class="big-x">ОШИБКА</div>' +
+                    '<div class="sub">всё сначала... вопрос 1 из 30</div>';
+    stage.append(box);
+    setTimeout(function(){
+      current = 0;
+      answered = false;
+      renderQuestion();
+    }, 1300);
+  }
+  function softRestart(){
+    // перезапуск только текущего задания (для таймеров)
+    if(answered) return;
+    clearAllTimers();
+    stage.innerHTML = "";
+    titleEl.textContent = "НЕВОЗМОЖНЫЙ ТЕСТ 2.0 ДЛЯ АПОЛЛОНА";
+    progress.textContent = "Вопрос " + (current + 1) + " из " + questions.length;
+    questions[current].render();
   }
   function next(){
     if(answered) return;
@@ -149,9 +178,9 @@ try {
       render: function(){
         makeTitle('Нажми на кнопку «Я не кнопка».');
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("Кнопка", wrong));
+        g.append(makeBtn("Кнопка", fail));
         g.append(makeBtn("Я не кнопка", next));
-        g.append(makeBtn("Тоже кнопка", wrong));
+        g.append(makeBtn("Тоже кнопка", fail));
         stage.append(g);
       }
     },
@@ -160,9 +189,9 @@ try {
       render: function(){
         makeTitle('Нажми на кнопку, которая говорит «НЕ НАЖИМАЙ».');
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("НАЖМИ", wrong));
+        g.append(makeBtn("НАЖМИ", fail));
         g.append(makeBtn("НЕ НАЖИМАЙ", next));
-        g.append(makeBtn("ЖМИ", wrong));
+        g.append(makeBtn("ЖМИ", fail));
         stage.append(g);
       }
     },
@@ -176,7 +205,7 @@ try {
         s.querySelector("#sky").addEventListener("click", function(e){ e.stopPropagation(); next(); });
       }
     },
-    // 4
+    // 4 — таймер: нажал раньше = soft wrong (не рестарт)
     {
       render: function(){
         makeTitle("Нажми на кнопку через 3 секунды. Не раньше.");
@@ -191,11 +220,11 @@ try {
         }, 1000);
         addTimer(iv);
         stage.append(makeBtn("ЖМИ", function(){
-          if(canTap) next(); else wrong();
+          if(canTap) next(); else softWrong();
         }, "big"));
       }
     },
-    // 5
+    // 5 — порядок: ошибка = рестарт
     {
       render: function(){
         makeTitle("Нажми в порядке: КРАСНАЯ → СИНЯЯ → ЗЕЛЁНАЯ");
@@ -210,16 +239,14 @@ try {
               idx++;
               if(idx >= order.length) next();
             } else {
-              idx = 0;
-              g.querySelectorAll("button").forEach(function(x){ x.style.opacity = "1"; });
-              wrong();
+              fail();
             }
           }, color));
         });
         stage.append(g);
       }
     },
-    // 6
+    // 6 — точка: большая = рестарт
     {
       render: function(){
         makeTitle("Нажми на маленькую красную точку.");
@@ -228,7 +255,7 @@ try {
         stage.append(arena);
         var big = document.createElement("div");
         big.style.cssText = "position:absolute;width:70px;height:70px;background:#ff2448;border-radius:50%;left:20%;top:30%;cursor:pointer";
-        big.addEventListener("click", wrong);
+        big.addEventListener("click", fail);
         arena.append(big);
         var small = document.createElement("div");
         small.style.cssText = "position:absolute;width:18px;height:18px;background:#ff2448;border-radius:50%;left:70%;top:60%;cursor:pointer";
@@ -236,7 +263,7 @@ try {
         arena.append(small);
       }
     },
-    // 7
+    // 7 — зажми: отпустил раньше = просто сброс (таймер)
     {
       render: function(){
         makeTitle("Зажми кнопку и держи 2 секунды.");
@@ -257,7 +284,7 @@ try {
           }, 2000);
         }
         function cancel(){
-          if(timer){ clearTimeout(timer); timer = null; btn.textContent = "ДЕРЖИ МЕНЯ"; }
+          if(timer){ clearTimeout(timer); timer = null; if(!done) btn.textContent = "ДЕРЖИ МЕНЯ"; }
         }
         btn.addEventListener("touchstart", start, {passive:false});
         btn.addEventListener("touchend", cancel);
@@ -266,7 +293,7 @@ try {
         btn.addEventListener("mouseleave", cancel);
       }
     },
-    // 8
+    // 8 — ввод: неверно = рестарт
     {
       render: function(){
         makeTitle("Напечатай слово АПОЛЛОН заглавными буквами.");
@@ -275,13 +302,13 @@ try {
         inp.setAttribute("autocapitalize","characters");
         stage.append(inp);
         var check = function(){
-          if(inp.value === "АПОЛЛОН") next(); else wrong();
+          if(inp.value === "АПОЛЛОН") next(); else fail();
         };
         inp.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
         stage.append(makeBtn("ПРОВЕРИТЬ", check));
       }
     },
-    // 9
+    // 9 — 7 кликов за 3 сек: не успел = soft restart задания
     {
       render: function(){
         makeTitle("Нажми 7 раз за 3 секунды.");
@@ -296,7 +323,12 @@ try {
           t.textContent = "осталось: " + (timeLeft/1000).toFixed(1) + " сек";
           if(timeLeft <= 0){
             clearInterval(iv);
-            if(count < 7){ failed = true; t.textContent = "ВРЕМЯ ВЫШЛО"; sfx.wrong(); }
+            if(count < 7){
+              failed = true;
+              t.textContent = "ВРЕМЯ ВЫШЛО — заново";
+              sfx.wrong();
+              setTimeout(softRestart, 800);
+            }
           }
         }, 100);
         addTimer(iv);
@@ -308,26 +340,29 @@ try {
         }, "big"));
       }
     },
-    // 10
+    // 10 — невидимая кнопка: клик мимо = рестарт
     {
       render: function(){
         makeTitle("Найди и нажми на кнопку в этом поле.");
         var arena = document.createElement("div");
-        arena.style.cssText = "position:relative;height:200px;border:1px dashed #4a4a7a;border-radius:14px;background:#10101d;overflow:hidden";
+        arena.style.cssText = "position:relative;height:200px;border:1px dashed #4a4a7a;border-radius:14px;background:#10101d;overflow:hidden;cursor:crosshair";
         stage.append(arena);
         var hidden = document.createElement("button");
         hidden.textContent = "ТУТ";
         hidden.style.cssText = "position:absolute;opacity:0.08;padding:10px 14px;font-size:14px;left:47%;top:53%;box-shadow:none;border:none";
-        hidden.addEventListener("click", next);
+        hidden.addEventListener("click", function(e){ e.stopPropagation(); next(); });
         arena.append(hidden);
+        arena.addEventListener("click", function(e){
+          if(e.target === arena) fail();
+        });
       }
     },
-    // 11
+    // 11 — меньшая кнопка: не та = рестарт
     {
       render: function(){
         makeTitle("Нажми на меньшую кнопку.");
         var g = document.createElement("div"); g.className = "grid";
-        var big = makeBtn("БОЛЬШАЯ", wrong);
+        var big = makeBtn("БОЛЬШАЯ", fail);
         big.style.padding = "24px 32px";
         big.style.fontSize = "20px";
         g.append(big);
@@ -338,11 +373,11 @@ try {
         stage.append(g);
       }
     },
-    // 12
+    // 12 — цвет: не зелёный = soft wrong (таймер)
     {
       render: function(){
         makeTitle("Нажми на кнопку, когда она станет ЗЕЛЁНОЙ.");
-        var btn = makeBtn("ЖДИ", function(){ wrong(); }, "big");
+        var btn = makeBtn("ЖДИ", function(){ softWrong(); }, "big");
         stage.append(btn);
         var colors = ["#2b2b4d","#246bff","#ff2448","#ffb300","#00b84d"];
         var idx = 0, isGreen = false;
@@ -356,27 +391,26 @@ try {
           e.stopPropagation();
           if(isGreen){
             clearInterval(iv);
-            sfx.correct();
             next();
           } else {
-            wrong();
+            softWrong();
           }
         });
       }
     },
-    // 13
+    // 13 — отличается: не та = рестарт
     {
       render: function(){
         makeTitle("Какая кнопка отличается? Нажми на неё.");
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("⬤", wrong));
-        g.append(makeBtn("⬤", wrong));
+        g.append(makeBtn("⬤", fail));
+        g.append(makeBtn("⬤", fail));
         g.append(makeBtn("○", next));
-        g.append(makeBtn("⬤", wrong));
+        g.append(makeBtn("⬤", fail));
         stage.append(g);
       }
     },
-    // 14
+    // 14 — несуществующая: клик по слову
     {
       render: function(){
         var h = makeTitle('Нажми на <span class="secret" id="nx">несуществующую</span> кнопку.');
@@ -386,7 +420,7 @@ try {
         stage.append(s);
       }
     },
-    // 15
+    // 15 — порядок 3→2→1: ошибка = рестарт
     {
       render: function(){
         makeTitle("Нажми в порядке: 3 → 2 → 1");
@@ -399,9 +433,7 @@ try {
               b.style.opacity = "0.4";
               if(seq.length === order.length) next();
             } else {
-              seq = [];
-              g.querySelectorAll("button").forEach(function(x){ x.style.opacity = "1"; });
-              wrong();
+              fail();
             }
           });
           g.append(btn);
@@ -409,31 +441,31 @@ try {
         stage.append(g);
       }
     },
-    // 16
+    // 16 — мод: неверно = рестарт
     {
       render: function(){
         makeTitle('Прочитай наоборот: «мод». Что это за слово?');
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("мод", wrong));
+        g.append(makeBtn("мод", fail));
         g.append(makeBtn("дом", next));
-        g.append(makeBtn("ком", wrong));
-        g.append(makeBtn("лом", wrong));
+        g.append(makeBtn("ком", fail));
+        g.append(makeBtn("лом", fail));
         stage.append(g);
       }
     },
-    // 17
+    // 17 — лишнее emoji: не то = рестарт
     {
       render: function(){
         makeTitle("Найди лишнее и нажми на него.");
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("🐶", wrong));
-        g.append(makeBtn("🐶", wrong));
+        g.append(makeBtn("🐶", fail));
+        g.append(makeBtn("🐶", fail));
         g.append(makeBtn("🐨", next));
-        g.append(makeBtn("🐶", wrong));
+        g.append(makeBtn("🐶", fail));
         stage.append(g);
       }
     },
-    // 18
+    // 18 — зеркало: неверно = рестарт
     {
       render: function(){
         makeTitle('Напечатай слово «зеркало» наоборот.');
@@ -441,13 +473,13 @@ try {
         inp.placeholder = "наоборот";
         stage.append(inp);
         var check = function(){
-          if(inp.value.trim().toLowerCase() === "олакрез") next(); else wrong();
+          if(inp.value.trim().toLowerCase() === "олакрез") next(); else fail();
         };
         inp.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
         stage.append(makeBtn("ПРОВЕРИТЬ", check));
       }
     },
-    // 19
+    // 19 — все гласные: согласная = рестарт
     {
       render: function(){
         makeTitle("Нажми на все гласные буквы в слове АПОЛЛОН.");
@@ -464,14 +496,14 @@ try {
                 if(Object.keys(sel).length === 2) next();
               }
             } else {
-              wrong();
+              fail();
             }
           }, "big"));
         });
         stage.append(g);
       }
     },
-    // 20
+    // 20 — растущая: не та = рестарт
     {
       render: function(){
         makeTitle("Нажми на кнопку, которая растёт.");
@@ -479,25 +511,29 @@ try {
         var grow = makeBtn("РАСТУ", next);
         grow.style.animation = "grow 2s infinite alternate";
         g.append(grow);
-        g.append(makeBtn("Стою", wrong));
-        g.append(makeBtn("Сплю", wrong));
+        g.append(makeBtn("Стою", fail));
+        g.append(makeBtn("Сплю", fail));
         stage.append(g);
       }
     },
-    // 21
+    // 21 — исчезающая: не та = рестарт; исчезла = soft restart
     {
       render: function(){
         makeTitle("Нажми на кнопку, пока она не исчезла.");
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("Стою", wrong));
+        g.append(makeBtn("Стою", fail));
         var shrink = makeBtn("ИСЧЕЗАЮ", next);
         shrink.style.animation = "shrink 3s forwards";
         g.append(shrink);
-        g.append(makeBtn("Тоже стою", wrong));
+        g.append(makeBtn("Тоже стою", fail));
         stage.append(g);
+        var hideTimer = setTimeout(function(){
+          if(!answered) softRestart();
+        }, 3300);
+        addTimer(hideTimer);
       }
     },
-    // 22
+    // 22 — двойной тап: не успел = soft wrong (таймер)
     {
       render: function(){
         makeTitle("Нажми на кнопку дважды очень быстро.");
@@ -505,12 +541,13 @@ try {
         var btn = makeBtn("ЖМИ ДВАЖДЫ", function(){
           var now = Date.now();
           if(now - lastTap < 350){ next(); }
+          else { softWrong(); }
           lastTap = now;
         }, "big");
         stage.append(btn);
       }
     },
-    // 23
+    // 23 — движущаяся: промах = игнор (нужно попасть)
     {
       render: function(){
         makeTitle("Нажми на движущуюся кнопку.");
@@ -523,18 +560,18 @@ try {
         arena.append(btn);
       }
     },
-    // 24
+    // 24 — ноль: не та = рестарт
     {
       render: function(){
         makeTitle("Нажми на кнопку, где написано слово «ноль».");
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("0", wrong));
+        g.append(makeBtn("0", fail));
         g.append(makeBtn("ноль", next));
-        g.append(makeBtn("нуль", wrong));
+        g.append(makeBtn("нуль", fail));
         stage.append(g);
       }
     },
-    // 25
+    // 25 — счётчик 5: не то число = soft wrong (таймер)
     {
       render: function(){
         makeTitle("Нажми на кнопку, когда счётчик покажет 5.");
@@ -549,11 +586,11 @@ try {
         addTimer(iv);
         stage.append(makeBtn("ЖМИ", function(){
           if(n === 5){ clearInterval(iv); next(); }
-          else wrong();
+          else softWrong();
         }, "big"));
       }
     },
-    // 26
+    // 26 — КОТ: не та буква = рестарт
     {
       render: function(){
         makeTitle("Собери слово КОТ: нажимай буквы по порядку.");
@@ -567,9 +604,7 @@ try {
               b.style.opacity = "0.4";
               if(idx >= word.length) next();
             } else {
-              idx = 0;
-              g.querySelectorAll("button").forEach(function(x){ x.style.opacity = "1"; });
-              wrong();
+              fail();
             }
           }, "big");
           g.append(btn);
@@ -577,18 +612,18 @@ try {
         stage.append(g);
       }
     },
-    // 27
+    // 27 — пустая: не та = рестарт
     {
       render: function(){
         makeTitle("Нажми на пустую кнопку.");
         var g = document.createElement("div"); g.className = "grid";
-        g.append(makeBtn("Текст", wrong));
+        g.append(makeBtn("Текст", fail));
         g.append(makeBtn("&nbsp;", next));
-        g.append(makeBtn("Ещё текст", wrong));
+        g.append(makeBtn("Ещё текст", fail));
         stage.append(g);
       }
     },
-    // 28
+    // 28 — алфавит: не та = рестарт
     {
       render: function(){
         makeTitle("Нажми буквы в алфавитном порядке.");
@@ -602,9 +637,7 @@ try {
               b.style.opacity = "0.4";
               if(idx >= order.length) next();
             } else {
-              idx = 0;
-              g.querySelectorAll("button").forEach(function(x){ x.style.opacity = "1"; });
-              wrong();
+              fail();
             }
           }, "big");
           g.append(btn);
@@ -612,7 +645,7 @@ try {
         stage.append(g);
       }
     },
-    // 29
+    // 29 — все О: не О = рестарт
     {
       render: function(){
         makeTitle("Нажми на все кнопки с буквой О.");
@@ -630,14 +663,14 @@ try {
                 if(Object.keys(sel).length === total) next();
               }
             } else {
-              wrong();
+              fail();
             }
           }, "big"));
         });
         stage.append(g);
       }
     },
-    // 30 — 200 попаданий именно по кнопке
+    // 30 — 200 попаданий: промах = игнор (счётчик)
     {
       render: function(){
         makeTitle("Нажми на кнопку 200 раз. Только точные попадания считаются.");
@@ -684,7 +717,6 @@ try {
           move();
         }
 
-        // Мобильный тап — только по кнопке
         btn.addEventListener("touchstart", function(e){
           e.preventDefault();
           e.stopPropagation();
@@ -693,7 +725,6 @@ try {
           setTimeout(function(){ dodgeFired = false; }, 400);
         }, {passive:false});
 
-        // Десктопный клик — тоже только по кнопке
         btn.addEventListener("click", function(e){
           e.stopPropagation();
           if(dodgeFired) return;
@@ -708,7 +739,7 @@ try {
     progress.textContent = "";
     stage.innerHTML = "";
     sfx.win();
-    makeTitle("Аполлон, ты выжил. 30 испытаний без единой подсказки.");
+    makeTitle("Аполлон, ты выжил. 30 испытаний без единой ошибки.");
     var spoiler = document.createElement("div");
     spoiler.className = "small";
     spoiler.textContent = "Спойлер: всё было проходимо.";
@@ -742,4 +773,4 @@ try {
 }
 </script>
 </body>
-  </html>
+</html>
