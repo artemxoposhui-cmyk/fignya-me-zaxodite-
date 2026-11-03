@@ -24,6 +24,7 @@
   .square:hover{transform:scale(1.05)}
   .red{background:#ff2448;border-color:#ff6b83;color:white}
   .blue{background:#246bff;border-color:#6b9bff;color:white}
+  .correct{border-color:var(--accent);box-shadow:0 0 18px #00ffb3aa}
   input{width:100%;padding:14px;border-radius:12px;border:1px solid #4a4a7a;background:#10101d;color:var(--text);font:inherit;font-size:16px;text-align:center;outline:none}
   input:focus{border-color:var(--accent)}
   .hint{margin-top:8px;padding:10px;border-radius:10px;background:#1d3a2f;border:1px solid #00ffb366;color:#b8ffe3;font-size:14px;text-align:center}
@@ -31,6 +32,7 @@
   .toggle{cursor:pointer;background:none;border:none;color:#aaa;padding:4px;box-shadow:none}
   .small{font-size:12px;color:#888;text-align:center}
   .counter{text-align:center;font-size:30px;font-weight:bold;color:var(--accent);letter-spacing:3px;margin:10px 0;text-shadow:0 0 12px #00ffb366}
+  .dodge-counter{position:absolute;top:6px;right:10px;font-size:12px;color:#7a7aa0}
   #err{white-space:pre-wrap;color:#ffb3c0;background:#2a0e14;border:1px solid #ff3b5c;padding:14px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none}
 </style>
 </head>
@@ -115,17 +117,19 @@ try {
   }
 
   var questions = [
+    // 1
     {
       render: function(){
         var h = makeTitle('Сколько будет 2 <span class="secret" id="plus">+</span> 2?');
         h.querySelector("#plus").addEventListener("click", function(e){ e.stopPropagation(); next(); });
         var grid = document.createElement("div"); grid.className = "grid";
-        ["3","5","4","Ни один"].forEach(function(text){
-          grid.append(makeBtn(text, function(){ handleWrong(); }));
+        ["3","5","4","Ни один"].forEach(function(t){
+          grid.append(makeBtn(t, function(){ handleWrong(); }));
         });
         stage.append(grid);
       }
     },
+    // 2
     {
       render: function(){
         makeTitle("Нажми на самую большую кнопку.");
@@ -136,6 +140,7 @@ try {
         stage.append(grid);
       }
     },
+    // 3
     {
       render: function(){
         var h = makeTitle('Выбери <span class="secret" id="green">зелёный</span> квадрат.');
@@ -149,6 +154,7 @@ try {
         stage.append(row);
       }
     },
+    // 4
     {
       hint: "Пароль — это буквально «он на обороте».",
       render: function(q){
@@ -156,14 +162,15 @@ try {
         var input = document.createElement("input"); input.placeholder = "пароль";
         stage.append(input);
         var check = function(){
-          var value = input.value.trim().toLowerCase().replace(/ё/g, "е");
-          if(value === "он на обороте" || value === "на обороте") next();
+          var v = input.value.trim().toLowerCase().replace(/ё/g, "е");
+          if(v === "он на обороте" || v === "на обороте") next();
           else handleWrong(q.hint);
         };
         input.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
         stage.append(makeBtn("Проверить", check));
       }
     },
+    // 5
     {
       render: function(){
         makeTitle("Не нажимай красную кнопку.");
@@ -174,26 +181,26 @@ try {
         stage.append(grid);
       }
     },
+    // 6
     {
       render: function(){
         makeTitle("Сколько пальцев на руке?");
         var grid = document.createElement("div"); grid.className = "grid";
         var options = ["4","5","6","Смотря на какой руке и у кого"];
-        options.forEach(function(text, index){
-          grid.append(makeBtn(text, function(){
-            if(index === options.length - 1) next(); else handleWrong();
-          }));
+        options.forEach(function(t, i){
+          grid.append(makeBtn(t, function(){ if(i === options.length - 1) next(); else handleWrong(); }));
         });
         stage.append(grid);
       }
     },
+    // 7
     {
       render: function(){
         makeTitle("Нажми в порядке: 3 → 1 → 2");
         var seq = [], order = [3,1,2];
         var grid = document.createElement("div"); grid.className = "grid";
         [1,2,3].forEach(function(n){
-          var btn = makeBtn(String(n), function(e, b){
+          grid.append(makeBtn(String(n), function(e, b){
             if(n === order[seq.length]){
               seq.push(n); b.classList.add("correct");
               if(seq.length === order.length) next();
@@ -202,39 +209,90 @@ try {
               stage.querySelectorAll("button").forEach(function(x){ x.classList.remove("correct"); });
               handleWrong();
             }
-          });
-          grid.append(btn);
+          }));
         });
         stage.append(grid);
       }
     },
+    // 8
+    {
+      render: function(){
+        makeTitle("Нажми на неправильный ответ.");
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("Правильный", function(){ handleWrong(); }));
+        grid.append(makeBtn("Верный", function(){ handleWrong(); }));
+        grid.append(makeBtn("Точный", function(){ handleWrong(); }));
+        grid.append(makeBtn("Неправильный", function(){ next(); }));
+        stage.append(grid);
+      }
+    },
+    // 9
+    {
+      render: function(){
+        makeTitle("Сколько вопросов в этом тесте?");
+        var input = document.createElement("input"); input.placeholder = "число";
+        stage.append(input);
+        var check = function(){
+          if(input.value.trim() === String(questions.length)) next(); else handleWrong();
+        };
+        input.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
+        stage.append(makeBtn("Проверить", check));
+      }
+    },
+    // 10
+    {
+      render: function(){
+        makeTitle("Найди кнопку в этом поле и нажми.");
+        var arena = document.createElement("div");
+        arena.style.cssText = "position:relative;height:180px;border:1px dashed #4a4a7a;border-radius:12px;background:#10101d;display:flex;align-items:center;justify-content:center";
+        stage.append(arena);
+        var hint = document.createElement("div");
+        hint.style.cssText = "color:#3a3a5a;font-size:14px;pointer-events:none";
+        hint.textContent = "здесь точно что-то есть...";
+        arena.append(hint);
+        var hidden = document.createElement("button");
+        hidden.textContent = "ТЫ НАШЁЛ";
+        hidden.style.cssText = "position:absolute;opacity:0.1;font-size:12px;padding:8px 10px;box-shadow:none;left:52%;top:55%";
+        hidden.addEventListener("mouseenter", function(){ hidden.style.opacity = "0.25"; });
+        hidden.addEventListener("mouseleave", function(){ hidden.style.opacity = "0.1"; });
+        hidden.addEventListener("click", function(){ next(); });
+        arena.append(hidden);
+      }
+    },
+    // 11 — runaway 200
     {
       render: function(){
         makeTitle('Нажми на кнопку «ПОЙМАЙ МЕНЯ».');
         var arena = document.createElement("div");
         arena.style.cssText = "position:relative;height:220px;border:1px dashed #4a4a7a;border-radius:12px;overflow:hidden;background:#10101d";
         stage.append(arena);
+        var counterEl = document.createElement("div");
+        counterEl.className = "dodge-counter";
+        counterEl.textContent = "увёртываний: 0 / 200";
+        arena.append(counterEl);
         var btn = document.createElement("button");
         btn.textContent = "ПОЙМАЙ МЕНЯ";
-        btn.style.cssText = "position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transition:left .12s,top .12s;white-space:nowrap";
+        btn.style.cssText = "position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transition:left .08s,top .08s;white-space:nowrap";
         arena.append(btn);
-        var dodges = 0, MAX = 7;
+        var dodges = 0, MAX = 200;
         var move = function(){
           var pad = 8, bw = btn.offsetWidth, bh = btn.offsetHeight;
           var aw = arena.clientWidth, ah = arena.clientHeight;
           var maxX = Math.max(pad, aw - bw - pad), maxY = Math.max(pad, ah - bh - pad);
-          var x = pad + Math.random() * (maxX - pad);
-          var y = pad + Math.random() * (maxY - pad);
-          btn.style.left = x + "px"; btn.style.top = y + "px"; btn.style.transform = "none";
+          btn.style.left = (pad + Math.random() * (maxX - pad)) + "px";
+          btn.style.top  = (pad + Math.random() * (maxY - pad)) + "px";
+          btn.style.transform = "none";
         };
         var giveUp = function(){
           btn.textContent = "ЛАДНО, ЛОВИ";
           btn.style.transition = "left .3s ease, top .3s ease, transform .3s ease";
           btn.style.left = "50%"; btn.style.top = "50%"; btn.style.transform = "translate(-50%,-50%)";
+          counterEl.textContent = "сдалась!";
         };
         var dodge = function(){
           if(dodges >= MAX) return;
-          dodges++; sfx.click();
+          dodges++;
+          counterEl.textContent = "увёртываний: " + dodges + " / " + MAX;
           if(dodges >= MAX){ giveUp(); return; }
           move();
         };
@@ -254,20 +312,295 @@ try {
         });
       }
     },
+    // 12 — word trick "не красная"
     {
       render: function(){
-        makeTitle("Финальный шаг. Нажми на кнопку 200 раз.");
-        var count = 0, MAX = 200;
-        var counterEl = document.createElement("div");
-        counterEl.className = "counter";
-        counterEl.textContent = "0 / 200";
+        makeTitle("Нажми на кнопку, которая НЕ красная.");
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("Я красная", function(){ handleWrong(); }, "red"));
+        grid.append(makeBtn("Я тоже красная", function(){ handleWrong(); }, "red"));
+        grid.append(makeBtn("Я <b>не</b> красная", function(){ next(); }, "red"));
+        grid.append(makeBtn("Я краснее всех", function(){ handleWrong(); }, "red"));
+        stage.append(grid);
+      }
+    },
+    // 13 — evens multi-select
+    {
+      render: function(){
+        makeTitle("Выбери все чётные числа и нажми «Готово».");
+        var selected = {}, evens = {2:1, 4:1, 6:1, 8:1};
+        var grid = document.createElement("div"); grid.className = "grid";
+        [2,3,4,5,6,7,8].forEach(function(n){
+          grid.append(makeBtn(String(n), function(e, b){
+            if(selected[n]){ delete selected[n]; b.classList.remove("correct"); }
+            else { selected[n] = 1; b.classList.add("correct"); }
+          }));
+        });
+        stage.append(grid);
+        stage.append(makeBtn("Готово", function(){
+          var ok = true;
+          Object.keys(evens).forEach(function(k){ if(!selected[k]) ok = false; });
+          Object.keys(selected).forEach(function(k){ if(!evens[k]) ok = false; });
+          if(ok) next(); else handleWrong();
+        }));
+      }
+    },
+    // 14 — click "ошибку"
+    {
+      render: function(){
+        var h = makeTitle('Найди <span class="secret" id="err-word">ошибку</span> в этом предложении.');
+        h.querySelector("#err-word").addEventListener("click", function(e){ e.stopPropagation(); next(); });
+        var d = document.createElement("div"); d.className = "small";
+        d.textContent = "В этом предложении нет никакой ошибки.";
+        stage.append(d);
+      }
+    },
+    // 15 — reverse name
+    {
+      render: function(){
+        makeTitle("Напиши имя АПОЛЛОН наоборот:");
+        var input = document.createElement("input"); input.placeholder = "наоборот";
+        stage.append(input);
+        var check = function(){
+          var v = input.value.trim().toUpperCase().replace(/Ё/g,"Е");
+          if(v === "НОЛЛОПА") next(); else handleWrong();
+        };
+        input.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
+        stage.append(makeBtn("Проверить", check));
+      }
+    },
+    // 16 — shy button fades on hover
+    {
+      render: function(){
+        makeTitle("Нажми на кнопку, которая боится курсора.");
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("Смелая", function(){ handleWrong(); }));
+        var shy = makeBtn("Стеснительная", function(){ next(); });
+        shy.addEventListener("mouseenter", function(){ shy.style.opacity = "0.15"; });
+        shy.addEventListener("mouseleave", function(){ shy.style.opacity = "1"; });
+        grid.append(shy);
+        grid.append(makeBtn("Обычная", function(){ handleWrong(); }));
+        stage.append(grid);
+      }
+    },
+    // 17 — kg cotton vs kg iron
+    {
+      render: function(){
+        makeTitle("Что тяжелее: килограмм ваты или килограмм железа?");
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("Вата", function(){ handleWrong(); }));
+        grid.append(makeBtn("Железо", function(){ handleWrong(); }));
+        grid.append(makeBtn("Одинаково", function(){ next(); }));
+        stage.append(grid);
+      }
+    },
+    // 18 — click exactly 10 times
+    {
+      render: function(){
+        makeTitle("Нажми на кнопку ровно 10 раз. Перебор — сброс.");
+        var count = 0, done = false;
+        var counterEl = document.createElement("div"); counterEl.className = "counter"; counterEl.textContent = "0 / 10";
         stage.append(counterEl);
-        var btn = makeBtn("НАЖМИ МЕНЯ", function(){
+        stage.append(makeBtn("НАЖМИ", function(){
+          if(done) return;
           count++;
-          counterEl.textContent = count + " / 200";
-          if(count >= MAX) next();
-        }, "big");
-        stage.append(btn);
+          if(count > 10){
+            count = 0; sfx.wrong();
+            counterEl.textContent = "0 / 10 (сброс!)";
+            return;
+          }
+          counterEl.textContent = count + " / 10";
+          if(count === 10){ done = true; next(); }
+        }, "big"));
+      }
+    },
+    // 19 — current year
+    {
+      render: function(){
+        makeTitle("Какой сейчас год?");
+        var input = document.createElement("input"); input.placeholder = "год";
+        stage.append(input);
+        var check = function(){
+          if(input.value.trim() === String(new Date().getFullYear())) next(); else handleWrong();
+        };
+        input.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
+        stage.append(makeBtn("Проверить", check));
+      }
+    },
+    // 20 — click 5 times in 2 seconds
+    {
+      render: function(){
+        makeTitle("Нажми на кнопку 5 раз за 2 секунды.");
+        var count = 0, timerId = null;
+        var counterEl = document.createElement("div"); counterEl.className = "counter"; counterEl.textContent = "0 / 5";
+        stage.append(counterEl);
+        stage.append(makeBtn("ЖМИ!", function(){
+          if(count === 0){
+            timerId = setTimeout(function(){
+              count = 0;
+              counterEl.textContent = "0 / 5 (время вышло)";
+              sfx.wrong();
+            }, 2000);
+          }
+          count++;
+          counterEl.textContent = count + " / 5";
+          if(count >= 5){ clearTimeout(timerId); next(); }
+        }, "big"));
+      }
+    },
+    // 21 — click the question mark
+    {
+      render: function(){
+        var h = makeTitle('Нажми на знак вопроса <span class="secret" id="qmark">?</span>');
+        h.querySelector("#qmark").addEventListener("click", function(e){ e.stopPropagation(); next(); });
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("?", function(){ handleWrong(); }));
+        grid.append(makeBtn("Вопрос", function(){ handleWrong(); }));
+        grid.append(makeBtn("Не знаю", function(){ handleWrong(); }));
+        stage.append(grid);
+      }
+    },
+    // 22 — button that changes color
+    {
+      render: function(){
+        makeTitle("Нажми на кнопку, которая меняет цвет.");
+        var grid = document.createElement("div"); grid.className = "grid";
+        var colors = ["#ff2448","#246bff","#00ffb3","#ffb300"];
+        var idx = 0;
+        var changer = makeBtn("Смотрю", function(){ next(); });
+        var iv = setInterval(function(){
+          if(!changer.isConnected){ clearInterval(iv); return; }
+          idx = (idx + 1) % colors.length;
+          changer.style.background = colors[idx];
+        }, 400);
+        grid.append(makeBtn("Стою", function(){ handleWrong(); }));
+        grid.append(changer);
+        grid.append(makeBtn("Лежу", function(){ handleWrong(); }));
+        stage.append(grid);
+      }
+    },
+    // 23 — palindrome
+    {
+      render: function(){
+        makeTitle("Введи любое слово-палиндром:");
+        var input = document.createElement("input"); input.placeholder = "слово";
+        stage.append(input);
+        var check = function(){
+          var v = input.value.trim().toLowerCase().replace(/ё/g,"е").replace(/[^а-яa-z]/g,"");
+          if(v.length >= 2 && v === v.split("").reverse().join("")) next();
+          else handleWrong();
+        };
+        input.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
+        stage.append(makeBtn("Проверить", check));
+      }
+    },
+    // 24 — smallest dot
+    {
+      render: function(){
+        makeTitle("Нажми на самую маленькую точку.");
+        var arena = document.createElement("div");
+        arena.style.cssText = "position:relative;height:200px;border:1px dashed #4a4a7a;border-radius:12px;background:#10101d;overflow:hidden";
+        stage.append(arena);
+        for(var i=0;i<8;i++){
+          var b = document.createElement("div");
+          var size = 14 + Math.random()*24;
+          b.style.cssText = "position:absolute;width:"+size+"px;height:"+size+"px;background:#3b82f6;border-radius:50%;left:"+(Math.random()*85)+"%;top:"+(Math.random()*85)+"%";
+          arena.append(b);
+        }
+        var dot = document.createElement("div");
+        dot.style.cssText = "position:absolute;width:6px;height:6px;background:#00ffb3;border-radius:50%;cursor:pointer;left:63%;top:71%;z-index:5";
+        dot.addEventListener("click", function(){ next(); });
+        arena.append(dot);
+      }
+    },
+    // 25 — chicken or egg
+    {
+      render: function(){
+        makeTitle("Что появилось раньше: курица или яйцо?");
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("Курица", function(){ handleWrong(); }));
+        grid.append(makeBtn("Яйцо", function(){ next(); }));
+        grid.append(makeBtn("Одновременно", function(){ handleWrong(); }));
+        stage.append(grid);
+      }
+    },
+    // 26 — click same button twice
+    {
+      render: function(){
+        makeTitle("Нажми на одну и ту же кнопку дважды.");
+        var clicks = {};
+        var grid = document.createElement("div"); grid.className = "grid";
+        [1,2,3].forEach(function(n){
+          grid.append(makeBtn("Кнопка " + n, function(e, btn){
+            if(!clicks[n]) clicks[n] = 0;
+            clicks[n]++;
+            if(clicks[n] >= 2) next();
+            else btn.classList.add("correct");
+          }));
+        });
+        stage.append(grid);
+      }
+    },
+    // 27 — click all buttons
+    {
+      render: function(){
+        makeTitle("Нажми на все кнопки.");
+        var clicked = {}, total = 4;
+        var grid = document.createElement("div"); grid.className = "grid";
+        for(var i=1; i<=total; i++){
+          (function(n){
+            grid.append(makeBtn("Кнопка " + n, function(e, btn){
+              if(!clicked[n]){ clicked[n] = 1; btn.classList.add("correct"); }
+              if(Object.keys(clicked).length === total) next();
+            }));
+          })(i);
+        }
+        stage.append(grid);
+      }
+    },
+    // 28 — Enter 3 times
+    {
+      render: function(){
+        makeTitle("Нажми Enter три раза.");
+        var count = 0;
+        var counterEl = document.createElement("div"); counterEl.className = "counter"; counterEl.textContent = "0 / 3";
+        stage.append(counterEl);
+        var onKey = function(e){
+          if(e.key === "Enter"){
+            count++;
+            counterEl.textContent = count + " / 3";
+            if(count >= 3){
+              window.removeEventListener("keydown", onKey);
+              next();
+            }
+          }
+        };
+        window.addEventListener("keydown", onKey);
+      }
+    },
+    // 29 — find "пасхалку"
+    {
+      render: function(){
+        var h = makeTitle('Найди <span class="secret" id="easter">пасхалку</span> в этом предложении.');
+        h.querySelector("#easter").addEventListener("click", function(e){ e.stopPropagation(); next(); });
+        var d = document.createElement("div"); d.className = "small";
+        d.textContent = "Тут нет пасхалки. Ищи в другом месте.";
+        stage.append(d);
+      }
+    },
+    // 30 — final 200 clicks
+    {
+      render: function(){
+        makeTitle("Финал. Нажми на кнопку 200 раз.");
+        var count = 0, done = false, MAX = 200;
+        var counterEl = document.createElement("div"); counterEl.className = "counter"; counterEl.textContent = "0 / 200";
+        stage.append(counterEl);
+        stage.append(makeBtn("НАЖМИ МЕНЯ", function(){
+          if(done) return;
+          count++;
+          counterEl.textContent = count + " / " + MAX;
+          if(count >= MAX){ done = true; next(); }
+        }, "big"));
       }
     }
   ];
@@ -277,7 +610,7 @@ try {
     progress.textContent = "";
     stage.innerHTML = "";
     sfx.win();
-    makeTitle("Аполлон, ты смог. Это было невозможно. Но ты прошёл.");
+    makeTitle("Аполлон, ты смог. Это было невозможно. Но ты прошёл 30 испытаний.");
     var spoiler = document.createElement("div");
     spoiler.className = "small";
     spoiler.textContent = "Спойлер: тест был проходимым с самого начала.";
