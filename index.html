@@ -5,157 +5,38 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Невозможный тест для Аполлона</title>
 <style>
-  :root{
-    --bg:#0f0f1a;
-    --panel:#1b1b2f;
-    --accent:#00ffb3;
-    --danger:#ff3b5c;
-    --text:#f2f2f7;
-  }
+  :root{--bg:#0f0f1a;--accent:#00ffb3;--danger:#ff3b5c;--text:#f2f2f7}
   *{box-sizing:border-box}
-  body{
-    margin:0;
-    min-height:100vh;
-    background:radial-gradient(circle at top,#252545,#0b0b12 60%);
-    color:var(--text);
-    font-family: ui-monospace, "Courier New", monospace;
-    display:grid;
-    place-items:center;
-    padding:16px;
-  }
-  #app{
-    width:min(760px,100%);
-    background:rgba(20,20,35,.94);
-    border:1px solid #3c3c66;
-    border-radius:18px;
-    box-shadow:0 0 40px #00ffb322, inset 0 0 30px #00000066;
-    padding:22px;
-  }
-  h1{
-    font-size:clamp(20px,4vw,32px);
-    letter-spacing:2px;
-    text-align:center;
-    margin:0 0 8px;
-    color:var(--accent);
-    text-shadow:0 0 14px #00ffb388;
-  }
-  #progress{
-    text-align:center;
-    color:#9a9ab0;
-    font-size:13px;
-    margin-bottom:18px;
-  }
-  #stage{
-    min-height:280px;
-    display:flex;
-    flex-direction:column;
-    gap:14px;
-    justify-content:center;
-  }
-  h2{
-    font-size:clamp(18px,3vw,24px);
-    line-height:1.35;
-    text-align:center;
-    margin:0 0 8px;
-  }
-  button, .fake-btn{
-    cursor:pointer;
-    border:1px solid #4a4a7a;
-    background:linear-gradient(#2b2b4d,#1f1f38);
-    color:var(--text);
-    padding:14px 18px;
-    border-radius:12px;
-    font:inherit;
-    font-size:16px;
-    transition:.15s;
-    box-shadow:0 4px 0 #0b0b12;
-  }
-  button:hover, .fake-btn:hover{
-    transform:translateY(-2px);
-    border-color:var(--accent);
-    box-shadow:0 6px 0 #0b0b12,0 0 18px #00ffb344;
-  }
+  body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#252545,#0b0b12 60%);color:var(--text);font-family:ui-monospace,"Courier New",monospace;display:grid;place-items:center;padding:16px}
+  #app{width:min(760px,100%);background:rgba(20,20,35,.94);border:1px solid #3c3c66;border-radius:18px;box-shadow:0 0 40px #00ffb322,inset 0 0 30px #00000066;padding:22px}
+  h1{font-size:clamp(20px,4vw,32px);letter-spacing:2px;text-align:center;margin:0 0 8px;color:var(--accent);text-shadow:0 0 14px #00ffb388}
+  #progress{text-align:center;color:#9a9ab0;font-size:13px;margin-bottom:18px}
+  #stage{min-height:280px;display:flex;flex-direction:column;gap:14px;justify-content:center}
+  h2{font-size:clamp(18px,3vw,24px);line-height:1.35;text-align:center;margin:0 0 8px}
+  button{cursor:pointer;border:1px solid #4a4a7a;background:linear-gradient(#2b2b4d,#1f1f38);color:var(--text);padding:14px 18px;border-radius:12px;font:inherit;font-size:16px;transition:.15s;box-shadow:0 4px 0 #0b0b12}
+  button:hover{transform:translateY(-2px);border-color:var(--accent);box-shadow:0 6px 0 #0b0b12,0 0 18px #00ffb344}
   button:active{transform:translateY(2px);box-shadow:0 2px 0 #0b0b12}
-  button.wrong{animation:shake .25s;border-color:var(--danger);color:#ffb3c0}
-  button.correct{border-color:var(--accent);box-shadow:0 0 20px #00ffb3aa}
-  .grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-    gap:12px;
-  }
-  .secret{
-    cursor:pointer;
-    color:var(--accent);
-    text-decoration:underline;
-    text-decoration-style:wavy;
-  }
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+  .secret{cursor:pointer;color:var(--accent)}
   .big{font-size:2rem;padding:28px}
-  .squares{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:12px;
-  }
-  .square{
-    height:80px;
-    border-radius:12px;
-    background:#3b82f6;
-    border:2px solid #60a5fa;
-    cursor:pointer;
-    transition:.15s;
-  }
+  .squares{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .square{height:80px;border-radius:12px;background:#3b82f6;border:2px solid #60a5fa;cursor:pointer;transition:.15s}
   .square:hover{transform:scale(1.05)}
   .red{background:#ff2448;border-color:#ff6b83;color:white}
   .blue{background:#246bff;border-color:#6b9bff;color:white}
-  input{
-    width:100%;
-    padding:14px;
-    border-radius:12px;
-    border:1px solid #4a4a7a;
-    background:#10101d;
-    color:var(--text);
-    font:inherit;
-    font-size:16px;
-    text-align:center;
-    outline:none;
-  }
+  input{width:100%;padding:14px;border-radius:12px;border:1px solid #4a4a7a;background:#10101d;color:var(--text);font:inherit;font-size:16px;text-align:center;outline:none}
   input:focus{border-color:var(--accent)}
-  .hint{
-    margin-top:8px;
-    padding:10px;
-    border-radius:10px;
-    background:#1d3a2f;
-    border:1px solid #00ffb366;
-    color:#b8ffe3;
-    font-size:14px;
-    text-align:center;
-  }
-  .footer{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:18px;
-    color:#888;
-    font-size:12px;
-  }
-  .toggle{
-    cursor:pointer;
-    background:none;
-    border:none;
-    color:#aaa;
-    padding:4px;
-    box-shadow:none;
-  }
-  .toggle:hover{color:var(--accent);transform:none;box-shadow:none}
+  .hint{margin-top:8px;padding:10px;border-radius:10px;background:#1d3a2f;border:1px solid #00ffb366;color:#b8ffe3;font-size:14px;text-align:center}
+  .footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px;color:#888;font-size:12px}
+  .toggle{cursor:pointer;background:none;border:none;color:#aaa;padding:4px;box-shadow:none}
   .small{font-size:12px;color:#888;text-align:center}
-  @keyframes shake{
-    0%,100%{transform:translateX(0)}
-    25%{transform:translateX(-6px)}
-    75%{transform:translateX(6px)}
-  }
+  .counter{text-align:center;font-size:30px;font-weight:bold;color:var(--accent);letter-spacing:3px;margin:10px 0;text-shadow:0 0 12px #00ffb366}
+  #err{white-space:pre-wrap;color:#ffb3c0;background:#2a0e14;border:1px solid #ff3b5c;padding:14px;border-radius:10px;font-size:13px;margin-bottom:14px;display:none}
 </style>
 </head>
 <body>
 <div id="app">
+  <div id="err"></div>
   <h1 id="title">НЕВОЗМОЖНЫЙ ТЕСТ ДЛЯ АПОЛЛОНА</h1>
   <div id="progress"></div>
   <main id="stage"></main>
@@ -166,144 +47,103 @@
 </div>
 
 <script>
-  const stage = document.getElementById("stage");
-  const progress = document.getElementById("progress");
-  const titleEl = document.getElementById("title");
-  const soundBtn = document.getElementById("soundBtn");
+window.onerror = function(msg, src, line, col, err){
+  var e = document.getElementById("err");
+  e.style.display = "block";
+  e.textContent = "ОШИБКА JS:\n" + msg + "\nСтрока " + line + ":" + col + "\n\n" + (err && err.stack ? err.stack : "");
+};
 
-  let current = 0;
-  let wrongCount = 0;
-  let answered = false;
-  let soundOn = true;
-  let audioCtx = null;
+try {
+  var stage = document.getElementById("stage");
+  var progress = document.getElementById("progress");
+  var titleEl = document.getElementById("title");
+  var soundBtn = document.getElementById("soundBtn");
 
-  function initAudio() {
-    if (!audioCtx) {
-      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    if (audioCtx.state === "suspended") audioCtx.resume();
+  var current = 0, wrongCount = 0, answered = false, soundOn = true, audioCtx = null;
+
+  function initAudio(){
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === "suspended") audioCtx.resume();
   }
-
-  function beep(freq = 440, dur = 0.1, type = "sine", vol = 0.08, delay = 0) {
-    if (!soundOn) return;
-    initAudio();
-    const t = audioCtx.currentTime + delay;
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type = type;
-    o.frequency.value = freq;
+  function beep(freq, dur, type, vol, delay){
+    freq = freq || 440; dur = dur || 0.1; type = type || "sine"; vol = vol || 0.08; delay = delay || 0;
+    if(!soundOn) return;
+    try{ initAudio(); } catch(e){ return; }
+    var t = audioCtx.currentTime + delay;
+    var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+    o.type = type; o.frequency.value = freq;
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-    o.connect(g);
-    g.connect(audioCtx.destination);
-    o.start(t);
-    o.stop(t + dur + 0.02);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t); o.stop(t + dur + 0.02);
   }
-
-  const sfx = {
-    click: () => beep(520, 0.06, "square", 0.04),
-    correct: () => {
-      beep(660, 0.09, "sine", 0.08);
-      beep(990, 0.12, "sine", 0.08, 0.1);
-    },
-    wrong: () => {
-      beep(160, 0.18, "sawtooth", 0.09);
-      beep(120, 0.22, "sawtooth", 0.08, 0.12);
-    },
-    win: () => {
-      [523, 659, 784, 1047].forEach((f, i) => beep(f, 0.18, "triangle", 0.08, i * 0.14));
-    }
+  var sfx = {
+    click: function(){ beep(520, 0.06, "square", 0.04); },
+    correct: function(){ beep(660, 0.09, "sine", 0.08); beep(990, 0.12, "sine", 0.08, 0.1); },
+    wrong: function(){ beep(160, 0.18, "sawtooth", 0.09); beep(120, 0.22, "sawtooth", 0.08, 0.12); },
+    win: function(){ [523,659,784,1047].forEach(function(f,i){ beep(f, 0.18, "triangle", 0.08, i*0.14); }); }
   };
 
-  function makeBtn(text, onClick, cls = "") {
-    const b = document.createElement("button");
+  function makeBtn(text, onClick, cls){
+    var b = document.createElement("button");
     b.innerHTML = text;
-    if (cls) b.className = cls;
-    b.addEventListener("click", (e) => {
-      e.stopPropagation();
-      sfx.click();
-      onClick(e, b);
-    });
+    if(cls) b.className = cls;
+    b.addEventListener("click", function(e){ e.stopPropagation(); sfx.click(); onClick(e, b); });
     return b;
   }
-
-  function makeTitle(html) {
-    const h = document.createElement("h2");
+  function makeTitle(html){
+    var h = document.createElement("h2");
     h.innerHTML = html;
     stage.append(h);
     return h;
   }
-
-  function showHint(text) {
-    if (!text || document.getElementById("hint")) return;
-    const d = document.createElement("div");
-    d.id = "hint";
-    d.className = "hint";
-    d.textContent = "Подсказка: " + text;
+  function showHint(text){
+    if(!text || document.getElementById("hint")) return;
+    var d = document.createElement("div");
+    d.id = "hint"; d.className = "hint"; d.textContent = "Подсказка: " + text;
     stage.append(d);
   }
-
-  function handleWrong(hint) {
-    sfx.wrong();
-    wrongCount++;
-    if (wrongCount >= 2) showHint(hint);
+  function handleWrong(hint){
+    sfx.wrong(); wrongCount++;
+    if(wrongCount >= 2) showHint(hint);
   }
-
-  function next() {
-    if (answered) return;
-    answered = true;
-    sfx.correct();
-    current++;
-    wrongCount = 0;
+  function next(){
+    if(answered) return;
+    answered = true; sfx.correct(); current++; wrongCount = 0;
     setTimeout(renderQuestion, 350);
   }
 
-  const questions = [
+  var questions = [
     {
-      hint: "Ответ не среди кнопок. Нажми на «+» в самом вопросе.",
-      render(q) {
-        const h = makeTitle('Сколько будет 2 <span class="secret" id="plus">+</span> 2?');
-        h.querySelector("#plus").addEventListener("click", (e) => {
-          e.stopPropagation();
-          next();
-        });
-
-        const grid = document.createElement("div");
-        grid.className = "grid";
-        ["3", "5", "4", "Ни один"].forEach((text) => {
-          grid.append(makeBtn(text, () => handleWrong(q.hint)));
+      render: function(){
+        var h = makeTitle('Сколько будет 2 <span class="secret" id="plus">+</span> 2?');
+        h.querySelector("#plus").addEventListener("click", function(e){ e.stopPropagation(); next(); });
+        var grid = document.createElement("div"); grid.className = "grid";
+        ["3","5","4","Ни один"].forEach(function(text){
+          grid.append(makeBtn(text, function(){ handleWrong(); }));
         });
         stage.append(grid);
       }
     },
     {
-      hint: "Самая большая кнопка — это буквально самая большая кнопка.",
-      render(q) {
+      render: function(){
         makeTitle("Нажми на самую большую кнопку.");
-        const grid = document.createElement("div");
-        grid.className = "grid";
-        grid.append(makeBtn("Маленькая", () => handleWrong(q.hint)));
-        grid.append(makeBtn("БОЛЬШАЯ", () => next(), "big"));
-        grid.append(makeBtn("Средняя", () => handleWrong(q.hint)));
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("Маленькая", function(){ handleWrong(); }));
+        grid.append(makeBtn("БОЛЬШАЯ", function(){ next(); }, "big"));
+        grid.append(makeBtn("Средняя", function(){ handleWrong(); }));
         stage.append(grid);
       }
     },
     {
-      hint: "Зелёный — это не квадрат. Это слово.",
-      render(q) {
-        const h = makeTitle('Выбери <span class="secret" id="green">зелёный</span> квадрат.');
-        h.querySelector("#green").addEventListener("click", (e) => {
-          e.stopPropagation();
-          next();
-        });
-
-        const row = document.createElement("div");
-        row.className = "squares";
-        for (let i = 0; i < 4; i++) {
-          const sq = document.createElement("div");
-          sq.className = "square";
-          sq.addEventListener("click", () => handleWrong(q.hint));
+      render: function(){
+        var h = makeTitle('Выбери <span class="secret" id="green">зелёный</span> квадрат.');
+        h.querySelector("#green").addEventListener("click", function(e){ e.stopPropagation(); next(); });
+        var row = document.createElement("div"); row.className = "squares";
+        for(var i=0; i<4; i++){
+          var sq = document.createElement("div"); sq.className = "square";
+          sq.addEventListener("click", function(){ handleWrong(); });
           row.append(sq);
         }
         stage.append(row);
@@ -311,254 +151,162 @@
     },
     {
       hint: "Пароль — это буквально «он на обороте».",
-      render(q) {
+      render: function(q){
         makeTitle("Введите пароль. Подсказка: он на обороте.");
-
-        const input = document.createElement("input");
-        input.placeholder = "пароль";
+        var input = document.createElement("input"); input.placeholder = "пароль";
         stage.append(input);
-
-        const check = () => {
-          const value = input.value.trim().toLowerCase().replace(/ё/g, "е");
-          if (value === "он на обороте" || value === "на обороте") {
-            next();
-          } else {
-            handleWrong(q.hint);
-          }
+        var check = function(){
+          var value = input.value.trim().toLowerCase().replace(/ё/g, "е");
+          if(value === "он на обороте" || value === "на обороте") next();
+          else handleWrong(q.hint);
         };
-
-        const btn = makeBtn("Проверить", check);
-        input.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") check();
-        });
-        stage.append(btn);
+        input.addEventListener("keydown", function(e){ if(e.key === "Enter") check(); });
+        stage.append(makeBtn("Проверить", check));
       }
     },
     {
-      hint: "Тебя просили не нажимать красную. Нажми синюю.",
-      render(q) {
+      render: function(){
         makeTitle("Не нажимай красную кнопку.");
-        const grid = document.createElement("div");
-        grid.className = "grid";
-
-        grid.append(makeBtn("КРАСНАЯ", () => handleWrong(q.hint), "red"));
-        grid.append(makeBtn("Нажми меня", () => next(), "blue"));
-        grid.append(makeBtn("Тоже красная", () => handleWrong(q.hint), "red"));
-
+        var grid = document.createElement("div"); grid.className = "grid";
+        grid.append(makeBtn("КРАСНАЯ", function(){ handleWrong(); }, "red"));
+        grid.append(makeBtn("Нажми меня", function(){ next(); }, "blue"));
+        grid.append(makeBtn("Тоже красная", function(){ handleWrong(); }, "red"));
         stage.append(grid);
       }
     },
     {
-      hint: "Правильный ответ — последний. Он самый честный.",
-      render(q) {
+      render: function(){
         makeTitle("Сколько пальцев на руке?");
-        const grid = document.createElement("div");
-        grid.className = "grid";
-
-        const options = ["4", "5", "6", "Смотря на какой руке и у кого"];
-        options.forEach((text, index) => {
-          grid.append(
-            makeBtn(text, () => {
-              if (index === options.length - 1) next();
-              else handleWrong(q.hint);
-            })
-          );
+        var grid = document.createElement("div"); grid.className = "grid";
+        var options = ["4","5","6","Смотря на какой руке и у кого"];
+        options.forEach(function(text, index){
+          grid.append(makeBtn(text, function(){
+            if(index === options.length - 1) next(); else handleWrong();
+          }));
         });
-
         stage.append(grid);
       }
     },
     {
-      hint: "Сначала 3, потом 1, потом 2. Если ошибся — начни заново.",
-      render(q) {
+      render: function(){
         makeTitle("Нажми в порядке: 3 → 1 → 2");
-
-        let seq = [];
-        const order = [3, 1, 2];
-        const grid = document.createElement("div");
-        grid.className = "grid";
-
-        [1, 2, 3].forEach((n) => {
-          const btn = makeBtn(String(n), (e, b) => {
-            if (n === order[seq.length]) {
-              seq.push(n);
-              b.classList.add("correct");
-
-              if (seq.length === order.length) {
-                next();
-              }
+        var seq = [], order = [3,1,2];
+        var grid = document.createElement("div"); grid.className = "grid";
+        [1,2,3].forEach(function(n){
+          var btn = makeBtn(String(n), function(e, b){
+            if(n === order[seq.length]){
+              seq.push(n); b.classList.add("correct");
+              if(seq.length === order.length) next();
             } else {
               seq = [];
-              stage.querySelectorAll("button").forEach((x) => x.classList.remove("correct"));
-              handleWrong(q.hint);
+              stage.querySelectorAll("button").forEach(function(x){ x.classList.remove("correct"); });
+              handleWrong();
             }
           });
           grid.append(btn);
         });
-
         stage.append(grid);
       }
     },
     {
-      hint: "Кнопка устанет после нескольких попыток. Гоняй её, пока не сдастся.",
-      render(q) {
+      render: function(){
         makeTitle('Нажми на кнопку «ПОЙМАЙ МЕНЯ».');
-
-        const arena = document.createElement("div");
-        arena.style.cssText = [
-          "position:relative",
-          "height:220px",
-          "border:1px dashed #4a4a7a",
-          "border-radius:12px",
-          "overflow:hidden",
-          "background:#10101d"
-        ].join(";");
+        var arena = document.createElement("div");
+        arena.style.cssText = "position:relative;height:220px;border:1px dashed #4a4a7a;border-radius:12px;overflow:hidden;background:#10101d";
         stage.append(arena);
-
-        const btn = document.createElement("button");
+        var btn = document.createElement("button");
         btn.textContent = "ПОЙМАЙ МЕНЯ";
-        btn.style.cssText = [
-          "position:absolute",
-          "left:50%",
-          "top:50%",
-          "transform:translate(-50%,-50%)",
-          "transition:left .12s,top .12s",
-          "white-space:nowrap"
-        ].join(";");
+        btn.style.cssText = "position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transition:left .12s,top .12s;white-space:nowrap";
         arena.append(btn);
-
-        let dodges = 0;
-        const MAX = 7;
-
-        const move = () => {
-          const pad = 8;
-          const bw = btn.offsetWidth;
-          const bh = btn.offsetHeight;
-          const aw = arena.clientWidth;
-          const ah = arena.clientHeight;
-          const maxX = Math.max(pad, aw - bw - pad);
-          const maxY = Math.max(pad, ah - bh - pad);
-          const x = pad + Math.random() * (maxX - pad);
-          const y = pad + Math.random() * (maxY - pad);
-          btn.style.left = x + "px";
-          btn.style.top = y + "px";
-          btn.style.transform = "none";
+        var dodges = 0, MAX = 7;
+        var move = function(){
+          var pad = 8, bw = btn.offsetWidth, bh = btn.offsetHeight;
+          var aw = arena.clientWidth, ah = arena.clientHeight;
+          var maxX = Math.max(pad, aw - bw - pad), maxY = Math.max(pad, ah - bh - pad);
+          var x = pad + Math.random() * (maxX - pad);
+          var y = pad + Math.random() * (maxY - pad);
+          btn.style.left = x + "px"; btn.style.top = y + "px"; btn.style.transform = "none";
         };
-
-        const giveUp = () => {
+        var giveUp = function(){
           btn.textContent = "ЛАДНО, ЛОВИ";
           btn.style.transition = "left .3s ease, top .3s ease, transform .3s ease";
-          btn.style.left = "50%";
-          btn.style.top = "50%";
-          btn.style.transform = "translate(-50%,-50%)";
+          btn.style.left = "50%"; btn.style.top = "50%"; btn.style.transform = "translate(-50%,-50%)";
         };
-
-        const dodge = () => {
-          if (dodges >= MAX) return;
-          dodges++;
-          sfx.click();
-          if (dodges >= 4) showHint(q.hint);
-          if (dodges >= MAX) {
-            giveUp();
-            return;
-          }
+        var dodge = function(){
+          if(dodges >= MAX) return;
+          dodges++; sfx.click();
+          if(dodges >= MAX){ giveUp(); return; }
           move();
         };
-
-        arena.addEventListener("mousemove", (e) => {
-          if (dodges >= MAX) return;
-          const r = btn.getBoundingClientRect();
-          const dx = e.clientX - (r.left + r.width / 2);
-          const dy = e.clientY - (r.top + r.height / 2);
-          if (dx * dx + dy * dy < 100 * 100) dodge();
+        arena.addEventListener("mousemove", function(e){
+          if(dodges >= MAX) return;
+          var r = btn.getBoundingClientRect();
+          var dx = e.clientX - (r.left + r.width / 2);
+          var dy = e.clientY - (r.top + r.height / 2);
+          if(dx*dx + dy*dy < 100*100) dodge();
         });
-
-        btn.addEventListener("touchstart", (e) => {
-          if (dodges < MAX) {
-            e.preventDefault();
-            dodge();
-          }
+        btn.addEventListener("touchstart", function(e){
+          if(dodges < MAX){ e.preventDefault(); dodge(); }
         }, { passive: false });
-
-        btn.addEventListener("click", () => {
-          if (dodges < MAX) {
-            dodge();
-            return;
-          }
+        btn.addEventListener("click", function(){
+          if(dodges < MAX){ dodge(); return; }
           next();
         });
       }
     },
     {
-      hint: "Просто нажми Enter.",
-      render() {
-        makeTitle("Последний шаг. Закончи тест.");
-
-        const input = document.createElement("input");
-        input.placeholder = "...";
-        stage.append(input);
-        input.focus();
-
-        const onKey = (e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            window.removeEventListener("keydown", onKey);
-            next();
-          }
-        };
-
-        window.addEventListener("keydown", onKey);
+      render: function(){
+        makeTitle("Финальный шаг. Нажми на кнопку 200 раз.");
+        var count = 0, MAX = 200;
+        var counterEl = document.createElement("div");
+        counterEl.className = "counter";
+        counterEl.textContent = "0 / 200";
+        stage.append(counterEl);
+        var btn = makeBtn("НАЖМИ МЕНЯ", function(){
+          count++;
+          counterEl.textContent = count + " / 200";
+          if(count >= MAX) next();
+        }, "big");
+        stage.append(btn);
       }
     }
   ];
 
-  function showVictory() {
+  function showVictory(){
     titleEl.textContent = "ТЕСТ ПРОЙДЕН";
     progress.textContent = "";
     stage.innerHTML = "";
     sfx.win();
-
     makeTitle("Аполлон, ты смог. Это было невозможно. Но ты прошёл.");
-    const spoiler = document.createElement("div");
+    var spoiler = document.createElement("div");
     spoiler.className = "small";
     spoiler.textContent = "Спойлер: тест был проходимым с самого начала.";
     stage.append(spoiler);
-
-    stage.append(
-      makeBtn("Пройти заново", () => {
-        current = 0;
-        wrongCount = 0;
-        answered = false;
-        renderQuestion();
-      })
-    );
+    stage.append(makeBtn("Пройти заново", function(){
+      current = 0; wrongCount = 0; answered = false; renderQuestion();
+    }));
   }
 
-  function renderQuestion() {
-    if (current >= questions.length) {
-      showVictory();
-      return;
-    }
-
-    answered = false;
-    wrongCount = 0;
-    stage.innerHTML = "";
+  function renderQuestion(){
+    if(current >= questions.length){ showVictory(); return; }
+    answered = false; wrongCount = 0; stage.innerHTML = "";
     titleEl.textContent = "НЕВОЗМОЖНЫЙ ТЕСТ ДЛЯ АПОЛЛОНА";
-    progress.textContent = `Вопрос ${current + 1} из ${questions.length}`;
-
+    progress.textContent = "Вопрос " + (current + 1) + " из " + questions.length;
     questions[current].render(questions[current]);
   }
 
-  soundBtn.addEventListener("click", () => {
+  soundBtn.addEventListener("click", function(){
     soundOn = !soundOn;
     soundBtn.textContent = soundOn ? "Звук: вкл" : "Звук: выкл";
-    if (soundOn) {
-      initAudio();
-      sfx.click();
-    }
+    if(soundOn){ try{ initAudio(); } catch(e){} sfx.click(); }
   });
 
   renderQuestion();
+} catch (e) {
+  var el = document.getElementById("err");
+  el.style.display = "block";
+  el.textContent = "ОШИБКА ПРИ СТАРТЕ:\n" + (e && e.message ? e.message : e) + "\n\n" + (e && e.stack ? e.stack : "");
+}
 </script>
 </body>
 </html>
