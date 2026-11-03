@@ -1,510 +1,564 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>🌈 Радужный тест · троллинг-версия</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            user-select: none;
-        }
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #0a0a12;
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        /* Яркая радуга */
-        .rainbow-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
-            background: linear-gradient(135deg, 
-                #ffb3b3, #ffd9b3, #ffffb3, #b3ffb3, #b3b3ff, #e6b3ff, #ffb3e6
-            );
-            background-size: 600% 600%;
-            animation: rainbowMove 12s ease infinite;
-            opacity: 0.35; /* ярче */
-        }
-
-        @keyframes rainbowMove {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Плавающие светлые шары */
-        .float-balls {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .ball {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(70px);
-            opacity: 0.35;
-            animation: floatBall 20s infinite alternate ease-in-out;
-        }
-        .ball:nth-child(1) { width: 300px; height: 300px; background: #ff9999; top: -10%; left: -10%; animation-duration: 18s; }
-        .ball:nth-child(2) { width: 400px; height: 400px; background: #99ff99; bottom: -20%; right: -10%; animation-duration: 22s; animation-delay: 2s; }
-        .ball:nth-child(3) { width: 250px; height: 250px; background: #9999ff; top: 40%; left: 30%; animation-duration: 25s; animation-delay: 4s; }
-        .ball:nth-child(4) { width: 350px; height: 350px; background: #ff99ff; bottom: 20%; left: -5%; animation-duration: 20s; animation-delay: 1s; }
-
-        @keyframes floatBall {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(80px, -60px) scale(1.2); }
-        }
-
-        .container {
-            position: relative;
-            z-index: 10;
-            background: rgba(20, 20, 30, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-radius: 48px;
-            padding: 40px 32px;
-            max-width: 600px;
-            width: 100%;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-            transition: 0.3s;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .progress {
-            text-align: center;
-            font-size: 14px;
-            letter-spacing: 2px;
-            color: rgba(255, 255, 255, 0.5);
-            margin-bottom: 20px;
-            font-weight: 300;
-        }
-
-        .question {
-            font-size: 26px;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 30px;
-            text-align: center;
-            line-height: 1.4;
-            text-shadow: 0 0 30px rgba(255,255,255,0.1);
-        }
-
-        .options {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            margin-bottom: 30px;
-        }
-
-        .option {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 60px;
-            padding: 16px 24px;
-            font-size: 20px;
-            font-weight: 500;
-            color: #eee;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            backdrop-filter: blur(4px);
-        }
-
-        .option:hover {
-            background: rgba(255, 255, 255, 0.18);
-            transform: scale(1.02);
-            border-color: rgba(255, 255, 255, 0.25);
-        }
-
-        .option.selected {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: #ff7eb3;
-            box-shadow: 0 0 40px rgba(255, 126, 179, 0.3);
-            color: #fff;
-            transform: scale(1.02);
-        }
-
-        .next-btn-wrapper {
-            position: relative;
-            height: 70px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Кнопка теперь позиционируется фиксированно относительно окна */
-        .next-btn {
-            position: fixed;  /* вместо absolute в контейнере */
-            background: linear-gradient(135deg, #ff7eb3, #ff4d7a);
-            border: none;
-            border-radius: 60px;
-            padding: 16px 48px;
-            font-size: 22px;
-            font-weight: 700;
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 40px rgba(255, 77, 122, 0.4);
-            transition: opacity 0.2s, transform 0.15s, left 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            letter-spacing: 1px;
-            white-space: nowrap;
-            z-index: 9999;
-            will-change: transform, left, top;
-            transform: translate(-50%, -50%); /* чтобы центрировать по заданным координатам */
-        }
-
-        .next-btn:hover {
-            transform: translate(-50%, -50%) scale(1.05);
-            box-shadow: 0 0 60px rgba(255, 77, 122, 0.6);
-        }
-
-        .next-btn.hidden {
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.15s;
-        }
-
-        .next-btn:active {
-            transform: translate(-50%, -50%) scale(0.92);
-        }
-
-        .result {
-            text-align: center;
-            color: #fff;
-            padding: 20px 0;
-        }
-
-        .result h2 {
-            font-size: 32px;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #f9d976, #f39c12, #ff7eb3, #4facfe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .result p {
-            font-size: 18px;
-            opacity: 0.8;
-            line-height: 1.6;
-        }
-
-        .result .emoji-big {
-            font-size: 64px;
-            display: block;
-            margin: 16px 0;
-        }
-
-        .restart-btn {
-            margin-top: 24px;
-            background: rgba(255,255,255,0.12);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 40px;
-            padding: 12px 32px;
-            font-size: 18px;
-            color: #fff;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .restart-btn:hover {
-            background: rgba(255,255,255,0.25);
-        }
-
-        @media (max-width: 500px) {
-            .container { padding: 28px 20px; }
-            .question { font-size: 22px; }
-            .option { font-size: 17px; padding: 14px 20px; }
-            .next-btn { padding: 14px 32px; font-size: 19px; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Невозможный тест для Аполлона</title>
+<style>
+  :root{
+    --bg:#0f0f1a;
+    --panel:#1b1b2f;
+    --accent:#00ffb3;
+    --danger:#ff3b5c;
+    --text:#f2f2f7;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:radial-gradient(circle at top,#252545,#0b0b12 60%);
+    color:var(--text);
+    font-family: ui-monospace, "Courier New", monospace;
+    display:grid;
+    place-items:center;
+    padding:16px;
+  }
+  #app{
+    width:min(760px,100%);
+    background:rgba(20,20,35,.94);
+    border:1px solid #3c3c66;
+    border-radius:18px;
+    box-shadow:0 0 40px #00ffb322, inset 0 0 30px #00000066;
+    padding:22px;
+  }
+  h1{
+    font-size:clamp(20px,4vw,32px);
+    letter-spacing:2px;
+    text-align:center;
+    margin:0 0 8px;
+    color:var(--accent);
+    text-shadow:0 0 14px #00ffb388;
+  }
+  #progress{
+    text-align:center;
+    color:#9a9ab0;
+    font-size:13px;
+    margin-bottom:18px;
+  }
+  #stage{
+    min-height:280px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+    justify-content:center;
+  }
+  h2{
+    font-size:clamp(18px,3vw,24px);
+    line-height:1.35;
+    text-align:center;
+    margin:0 0 8px;
+  }
+  button, .fake-btn{
+    cursor:pointer;
+    border:1px solid #4a4a7a;
+    background:linear-gradient(#2b2b4d,#1f1f38);
+    color:var(--text);
+    padding:14px 18px;
+    border-radius:12px;
+    font:inherit;
+    font-size:16px;
+    transition:.15s;
+    box-shadow:0 4px 0 #0b0b12;
+  }
+  button:hover, .fake-btn:hover{
+    transform:translateY(-2px);
+    border-color:var(--accent);
+    box-shadow:0 6px 0 #0b0b12,0 0 18px #00ffb344;
+  }
+  button:active{transform:translateY(2px);box-shadow:0 2px 0 #0b0b12}
+  button.wrong{animation:shake .25s;border-color:var(--danger);color:#ffb3c0}
+  button.correct{border-color:var(--accent);box-shadow:0 0 20px #00ffb3aa}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:12px;
+  }
+  .secret{
+    cursor:pointer;
+    color:var(--accent);
+    text-decoration:underline;
+    text-decoration-style:wavy;
+  }
+  .big{font-size:2rem;padding:28px}
+  .squares{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+  }
+  .square{
+    height:80px;
+    border-radius:12px;
+    background:#3b82f6;
+    border:2px solid #60a5fa;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .square:hover{transform:scale(1.05)}
+  .red{background:#ff2448;border-color:#ff6b83;color:white}
+  .blue{background:#246bff;border-color:#6b9bff;color:white}
+  input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #4a4a7a;
+    background:#10101d;
+    color:var(--text);
+    font:inherit;
+    font-size:16px;
+    text-align:center;
+    outline:none;
+  }
+  input:focus{border-color:var(--accent)}
+  .hint{
+    margin-top:8px;
+    padding:10px;
+    border-radius:10px;
+    background:#1d3a2f;
+    border:1px solid #00ffb366;
+    color:#b8ffe3;
+    font-size:14px;
+    text-align:center;
+  }
+  .footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:18px;
+    color:#888;
+    font-size:12px;
+  }
+  .toggle{
+    cursor:pointer;
+    background:none;
+    border:none;
+    color:#aaa;
+    padding:4px;
+    box-shadow:none;
+  }
+  .toggle:hover{color:var(--accent);transform:none;box-shadow:none}
+  .small{font-size:12px;color:#888;text-align:center}
+  @keyframes shake{
+    0%,100%{transform:translateX(0)}
+    25%{transform:translateX(-6px)}
+    75%{transform:translateX(6px)}
+  }
+</style>
 </head>
 <body>
-    <div class="rainbow-bg"></div>
-    <div class="float-balls">
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-        <div class="ball"></div>
-    </div>
+<div id="app">
+  <h1 id="title">НЕВОЗМОЖНЫЙ ТЕСТ ДЛЯ АПОЛЛОНА</h1>
+  <div id="progress"></div>
+  <main id="stage"></main>
+  <div class="footer">
+    <span>Попробуй пройти до конца.</span>
+    <button class="toggle" id="soundBtn">Звук: вкл</button>
+  </div>
+</div>
 
-    <div class="container" id="app">
-        <!-- Прогресс -->
-        <div class="progress" id="progress">Вопрос 1 из 4</div>
+<script>
+  const stage = document.getElementById("stage");
+  const progress = document.getElementById("progress");
+  const titleEl = document.getElementById("title");
+  const soundBtn = document.getElementById("soundBtn");
 
-        <!-- Вопрос -->
-        <div class="question" id="question">Как ты проводишь свободное время?</div>
+  let current = 0;
+  let wrongCount = 0;
+  let answered = false;
+  let soundOn = true;
+  let audioCtx = null;
 
-        <!-- Варианты -->
-        <div class="options" id="options"></div>
+  function initAudio() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+  }
 
-        <!-- Контейнер для кнопки (теперь не используется для позиционирования, но оставлен для совместимости) -->
-        <div class="next-btn-wrapper" id="nextWrapper">
-            <!-- Кнопка будет добавлена в body, чтобы быть поверх всего -->
-        </div>
-    </div>
+  function beep(freq = 440, dur = 0.1, type = "sine", vol = 0.08, delay = 0) {
+    if (!soundOn) return;
+    initAudio();
+    const t = audioCtx.currentTime + delay;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g);
+    g.connect(audioCtx.destination);
+    o.start(t);
+    o.stop(t + dur + 0.02);
+  }
 
-    <!-- Кнопку будем вставлять прямо в body -->
-    <button class="next-btn hidden" id="nextBtn">➜ Дальше</button>
+  const sfx = {
+    click: () => beep(520, 0.06, "square", 0.04),
+    correct: () => {
+      beep(660, 0.09, "sine", 0.08);
+      beep(990, 0.12, "sine", 0.08, 0.1);
+    },
+    wrong: () => {
+      beep(160, 0.18, "sawtooth", 0.09);
+      beep(120, 0.22, "sawtooth", 0.08, 0.12);
+    },
+    win: () => {
+      [523, 659, 784, 1047].forEach((f, i) => beep(f, 0.18, "triangle", 0.08, i * 0.14));
+    }
+  };
 
-    <script>
-        (function() {
-            // ---------- ДАННЫЕ ТЕСТА ----------
-            const questions = [
-                {
-                    text: "Как ты проводишь свободное время?",
-                    options: [
-                        { text: "💻 Сижу в интернете", value: 'internet' },
-                        { text: "🌳 Гуляю на улице", value: 'walk' },
-                        { text: "😴 Сплю или ем", value: 'neutral' }
-                    ]
-                },
-                {
-                    text: "Что ты делаешь в выходные?",
-                    options: [
-                        { text: "📱 Зависаю в соцсетях", value: 'internet' },
-                        { text: "🚴 Еду на природу", value: 'walk' },
-                        { text: "🎮 Играю в игры", value: 'internet' },
-                        { text: "🏀 Встречаюсь с друзьями", value: 'walk' }
-                    ]
-                },
-                {
-                    text: "Как ты предпочитаешь общаться?",
-                    options: [
-                        { text: "📩 Онлайн (чат, звонки)", value: 'internet' },
-                        { text: "🗣️ Личные встречи", value: 'walk' }
-                    ]
-                },
-                {
-                    text: "Что тебе нравится больше?",
-                    options: [
-                        { text: "🧘 Тишина и дом", value: 'neutral' },
-                        { text: "🎉 Шумные компании", value: 'walk' },
-                        { text: "📚 Узнавать новое в сети", value: 'internet' }
-                    ]
-                }
-            ];
+  function makeBtn(text, onClick, cls = "") {
+    const b = document.createElement("button");
+    b.innerHTML = text;
+    if (cls) b.className = cls;
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      sfx.click();
+      onClick(e, b);
+    });
+    return b;
+  }
 
-            // ---------- СОСТОЯНИЕ ----------
-            let currentQuestion = 0;
-            let answers = [];
-            let selectedOptionIndex = -1;
-            let isWaitingForNext = false;
-            let jumpCount = 0;
-            let totalJumps = 0;
-            let isGameFinished = false;
+  function makeTitle(html) {
+    const h = document.createElement("h2");
+    h.innerHTML = html;
+    stage.append(h);
+    return h;
+  }
 
-            const questionEl = document.getElementById('question');
-            const optionsEl = document.getElementById('options');
-            const nextBtn = document.getElementById('nextBtn');
-            const progressEl = document.getElementById('progress');
+  function showHint(text) {
+    if (!text || document.getElementById("hint")) return;
+    const d = document.createElement("div");
+    d.id = "hint";
+    d.className = "hint";
+    d.textContent = "Подсказка: " + text;
+    stage.append(d);
+  }
 
-            // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
-            function randomInt(min, max) {
-                return Math.floor(Math.random() * (max - min + 1)) + min;
+  function handleWrong(hint) {
+    sfx.wrong();
+    wrongCount++;
+    if (wrongCount >= 2) showHint(hint);
+  }
+
+  function next() {
+    if (answered) return;
+    answered = true;
+    sfx.correct();
+    current++;
+    wrongCount = 0;
+    setTimeout(renderQuestion, 350);
+  }
+
+  const questions = [
+    {
+      hint: "Ответ не среди кнопок. Нажми на «+» в самом вопросе.",
+      render(q) {
+        const h = makeTitle('Сколько будет 2 <span class="secret" id="plus">+</span> 2?');
+        h.querySelector("#plus").addEventListener("click", (e) => {
+          e.stopPropagation();
+          next();
+        });
+
+        const grid = document.createElement("div");
+        grid.className = "grid";
+        ["3", "5", "4", "Ни один"].forEach((text) => {
+          grid.append(makeBtn(text, () => handleWrong(q.hint)));
+        });
+        stage.append(grid);
+      }
+    },
+    {
+      hint: "Самая большая кнопка — это буквально самая большая кнопка.",
+      render(q) {
+        makeTitle("Нажми на самую большую кнопку.");
+        const grid = document.createElement("div");
+        grid.className = "grid";
+        grid.append(makeBtn("Маленькая", () => handleWrong(q.hint)));
+        grid.append(makeBtn("БОЛЬШАЯ", () => next(), "big"));
+        grid.append(makeBtn("Средняя", () => handleWrong(q.hint)));
+        stage.append(grid);
+      }
+    },
+    {
+      hint: "Зелёный — это не квадрат. Это слово.",
+      render(q) {
+        const h = makeTitle('Выбери <span class="secret" id="green">зелёный</span> квадрат.');
+        h.querySelector("#green").addEventListener("click", (e) => {
+          e.stopPropagation();
+          next();
+        });
+
+        const row = document.createElement("div");
+        row.className = "squares";
+        for (let i = 0; i < 4; i++) {
+          const sq = document.createElement("div");
+          sq.className = "square";
+          sq.addEventListener("click", () => handleWrong(q.hint));
+          row.append(sq);
+        }
+        stage.append(row);
+      }
+    },
+    {
+      hint: "Пароль — это буквально «он на обороте».",
+      render(q) {
+        makeTitle("Введите пароль. Подсказка: он на обороте.");
+
+        const input = document.createElement("input");
+        input.placeholder = "пароль";
+        stage.append(input);
+
+        const check = () => {
+          const value = input.value.trim().toLowerCase().replace(/ё/g, "е");
+          if (value === "он на обороте" || value === "на обороте") {
+            next();
+          } else {
+            handleWrong(q.hint);
+          }
+        };
+
+        const btn = makeBtn("Проверить", check);
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") check();
+        });
+        stage.append(btn);
+      }
+    },
+    {
+      hint: "Тебя просили не нажимать красную. Нажми синюю.",
+      render(q) {
+        makeTitle("Не нажимай красную кнопку.");
+        const grid = document.createElement("div");
+        grid.className = "grid";
+
+        grid.append(makeBtn("КРАСНАЯ", () => handleWrong(q.hint), "red"));
+        grid.append(makeBtn("Нажми меня", () => next(), "blue"));
+        grid.append(makeBtn("Тоже красная", () => handleWrong(q.hint), "red"));
+
+        stage.append(grid);
+      }
+    },
+    {
+      hint: "Правильный ответ — последний. Он самый честный.",
+      render(q) {
+        makeTitle("Сколько пальцев на руке?");
+        const grid = document.createElement("div");
+        grid.className = "grid";
+
+        const options = ["4", "5", "6", "Смотря на какой руке и у кого"];
+        options.forEach((text, index) => {
+          grid.append(
+            makeBtn(text, () => {
+              if (index === options.length - 1) next();
+              else handleWrong(q.hint);
+            })
+          );
+        });
+
+        stage.append(grid);
+      }
+    },
+    {
+      hint: "Сначала 3, потом 1, потом 2. Если ошибся — начни заново.",
+      render(q) {
+        makeTitle("Нажми в порядке: 3 → 1 → 2");
+
+        let seq = [];
+        const order = [3, 1, 2];
+        const grid = document.createElement("div");
+        grid.className = "grid";
+
+        [1, 2, 3].forEach((n) => {
+          const btn = makeBtn(String(n), (e, b) => {
+            if (n === order[seq.length]) {
+              seq.push(n);
+              b.classList.add("correct");
+
+              if (seq.length === order.length) {
+                next();
+              }
+            } else {
+              seq = [];
+              stage.querySelectorAll("button").forEach((x) => x.classList.remove("correct"));
+              handleWrong(q.hint);
             }
+          });
+          grid.append(btn);
+        });
 
-            // Переместить кнопку в случайное место по всему экрану
-            function jumpButton() {
-                const btnRect = nextBtn.getBoundingClientRect();
-                const w = window.innerWidth;
-                const h = window.innerHeight;
+        stage.append(grid);
+      }
+    },
+    {
+      hint: "Кнопка устанет после нескольких попыток. Гоняй её, пока не сдастся.",
+      render(q) {
+        makeTitle('Нажми на кнопку «ПОЙМАЙ МЕНЯ».');
 
-                // Размеры кнопки
-                const btnW = btnRect.width || 200; // запас
-                const btnH = btnRect.height || 60;
+        const arena = document.createElement("div");
+        arena.style.cssText = [
+          "position:relative",
+          "height:220px",
+          "border:1px dashed #4a4a7a",
+          "border-radius:12px",
+          "overflow:hidden",
+          "background:#10101d"
+        ].join(";");
+        stage.append(arena);
 
-                // Случайные координаты с отступами, чтобы не вылезала
-                const pad = 20;
-                const left = randomInt(pad, w - btnW - pad);
-                const top = randomInt(pad, h - btnH - pad);
+        const btn = document.createElement("button");
+        btn.textContent = "ПОЙМАЙ МЕНЯ";
+        btn.style.cssText = [
+          "position:absolute",
+          "left:50%",
+          "top:50%",
+          "transform:translate(-50%,-50%)",
+          "transition:left .12s,top .12s",
+          "white-space:nowrap"
+        ].join(";");
+        arena.append(btn);
 
-                nextBtn.style.left = left + 'px';
-                nextBtn.style.top = top + 'px';
-            }
+        let dodges = 0;
+        const MAX = 7;
 
-            // Запуск последовательности прыжков
-            function startJumpSequence() {
-                if (isWaitingForNext) return;
-                isWaitingForNext = true;
+        const move = () => {
+          const pad = 8;
+          const bw = btn.offsetWidth;
+          const bh = btn.offsetHeight;
+          const aw = arena.clientWidth;
+          const ah = arena.clientHeight;
+          const maxX = Math.max(pad, aw - bw - pad);
+          const maxY = Math.max(pad, ah - bh - pad);
+          const x = pad + Math.random() * (maxX - pad);
+          const y = pad + Math.random() * (maxY - pad);
+          btn.style.left = x + "px";
+          btn.style.top = y + "px";
+          btn.style.transform = "none";
+        };
 
-                totalJumps = randomInt(1, 10);
-                jumpCount = 0;
+        const giveUp = () => {
+          btn.textContent = "ЛАДНО, ЛОВИ";
+          btn.style.transition = "left .3s ease, top .3s ease, transform .3s ease";
+          btn.style.left = "50%";
+          btn.style.top = "50%";
+          btn.style.transform = "translate(-50%,-50%)";
+        };
 
-                // Показываем кнопку
-                nextBtn.classList.remove('hidden');
-                // Устанавливаем начальную позицию (центр экрана)
-                nextBtn.style.left = (window.innerWidth / 2) + 'px';
-                nextBtn.style.top = (window.innerHeight / 2) + 'px';
+        const dodge = () => {
+          if (dodges >= MAX) return;
+          dodges++;
+          sfx.click();
+          if (dodges >= 4) showHint(q.hint);
+          if (dodges >= MAX) {
+            giveUp();
+            return;
+          }
+          move();
+        };
 
-                setTimeout(() => {
-                    doJump();
-                }, 300);
-            }
+        arena.addEventListener("mousemove", (e) => {
+          if (dodges >= MAX) return;
+          const r = btn.getBoundingClientRect();
+          const dx = e.clientX - (r.left + r.width / 2);
+          const dy = e.clientY - (r.top + r.height / 2);
+          if (dx * dx + dy * dy < 100 * 100) dodge();
+        });
 
-            function doJump() {
-                if (jumpCount >= totalJumps) {
-                    // Завершили прыжки
-                    // Перемещаем в центр контейнера (но это не обязательно, можно оставить где есть)
-                    // Просто переходим к следующему вопросу
-                    isWaitingForNext = false;
-                    goToNextQuestion();
-                    return;
-                }
+        btn.addEventListener("touchstart", (e) => {
+          if (dodges < MAX) {
+            e.preventDefault();
+            dodge();
+          }
+        }, { passive: false });
 
-                // Скрываем на мгновение
-                nextBtn.classList.add('hidden');
-                setTimeout(() => {
-                    // Меняем позицию
-                    jumpButton();
-                    // Показываем
-                    nextBtn.classList.remove('hidden');
-                    jumpCount++;
-                    // Через паузу повторяем
-                    setTimeout(() => {
-                        doJump();
-                    }, 400 + randomInt(0, 300));
-                }, 200);
-            }
+        btn.addEventListener("click", () => {
+          if (dodges < MAX) {
+            dodge();
+            return;
+          }
+          next();
+        });
+      }
+    },
+    {
+      hint: "Просто нажми Enter.",
+      render() {
+        makeTitle("Последний шаг. Закончи тест.");
 
-            // Переход к следующему вопросу
-            function goToNextQuestion() {
-                if (selectedOptionIndex !== -1) {
-                    const selectedOption = questions[currentQuestion].options[selectedOptionIndex];
-                    answers.push(selectedOption.value);
-                }
+        const input = document.createElement("input");
+        input.placeholder = "...";
+        stage.append(input);
+        input.focus();
 
-                currentQuestion++;
-                if (currentQuestion < questions.length) {
-                    showQuestion(currentQuestion);
-                } else {
-                    showResult();
-                }
-            }
+        const onKey = (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            window.removeEventListener("keydown", onKey);
+            next();
+          }
+        };
 
-            // Показать вопрос
-            function showQuestion(index) {
-                const q = questions[index];
-                questionEl.textContent = q.text;
-                progressEl.textContent = `Вопрос ${index+1} из ${questions.length}`;
+        window.addEventListener("keydown", onKey);
+      }
+    }
+  ];
 
-                optionsEl.innerHTML = '';
-                q.options.forEach((opt, idx) => {
-                    const div = document.createElement('div');
-                    div.className = 'option';
-                    div.textContent = opt.text;
-                    div.dataset.index = idx;
-                    div.addEventListener('click', function() {
-                        if (isWaitingForNext) return;
-                        document.querySelectorAll('.option').forEach(el => el.classList.remove('selected'));
-                        this.classList.add('selected');
-                        selectedOptionIndex = idx;
-                        if (!isWaitingForNext) {
-                            startJumpSequence();
-                        }
-                    });
-                    optionsEl.appendChild(div);
-                });
+  function showVictory() {
+    titleEl.textContent = "ТЕСТ ПРОЙДЕН";
+    progress.textContent = "";
+    stage.innerHTML = "";
+    sfx.win();
 
-                selectedOptionIndex = -1;
-                // Скрываем кнопку
-                nextBtn.classList.add('hidden');
-                // сбрасываем позицию (необязательно)
-                isWaitingForNext = false;
-            }
+    makeTitle("Аполлон, ты смог. Это было невозможно. Но ты прошёл.");
+    const spoiler = document.createElement("div");
+    spoiler.className = "small";
+    spoiler.textContent = "Спойлер: тест был проходимым с самого начала.";
+    stage.append(spoiler);
 
-            // Показать результат
-            function showResult() {
-                let internetCount = 0, walkCount = 0, neutralCount = 0;
-                answers.forEach(val => {
-                    if (val === 'internet') internetCount++;
-                    else if (val === 'walk') walkCount++;
-                    else neutralCount++;
-                });
+    stage.append(
+      makeBtn("Пройти заново", () => {
+        current = 0;
+        wrongCount = 0;
+        answered = false;
+        renderQuestion();
+      })
+    );
+  }
 
-                let resultText = '', emoji = '', description = '';
+  function renderQuestion() {
+    if (current >= questions.length) {
+      showVictory();
+      return;
+    }
 
-                if (internetCount > walkCount && internetCount > neutralCount) {
-                    resultText = 'Ты — интернет-зависимый!';
-                    emoji = '💻🫠';
-                    description = 'Ты проводишь много времени в сети. Может, стоит выйти на улицу?';
-                } else if (walkCount > internetCount && walkCount > neutralCount) {
-                    resultText = 'Ты — активный и классный!';
-                    emoji = '🌳😎';
-                    description = 'Ты любишь гулять и общаться вживую. Так держать!';
-                } else if (neutralCount >= internetCount && neutralCount >= walkCount) {
-                    resultText = 'Ты — человек-загадка';
-                    emoji = '🧐🤷';
-                    description = 'Ты любишь и то, и другое, но чаще выбираешь покой.';
-                } else {
-                    resultText = 'Ты — гармоничная личность';
-                    emoji = '⚖️✨';
-                    description = 'У тебя баланс между интернетом и реальной жизнью!';
-                }
+    answered = false;
+    wrongCount = 0;
+    stage.innerHTML = "";
+    titleEl.textContent = "НЕВОЗМОЖНЫЙ ТЕСТ ДЛЯ АПОЛЛОНА";
+    progress.textContent = `Вопрос ${current + 1} из ${questions.length}`;
 
-                if (internetCount >= 3) {
-                    resultText = '💀 Ты — задрот!';
-                    emoji = '🎮🧟';
-                    description = 'Ты живёшь в сети. Пора перезагружаться в реальности.';
-                } else if (walkCount >= 3) {
-                    resultText = '🏆 Ты — король улиц!';
-                    emoji = '👑🌞';
-                    description = 'Ты обожаешь свежий воздух и движение. Ты — пример для подражания.';
-                }
+    questions[current].render(questions[current]);
+  }
 
-                questionEl.style.display = 'none';
-                optionsEl.style.display = 'none';
-                progressEl.textContent = '🏁 Тест завершён!';
-                nextBtn.classList.add('hidden');
+  soundBtn.addEventListener("click", () => {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "Звук: вкл" : "Звук: выкл";
+    if (soundOn) {
+      initAudio();
+      sfx.click();
+    }
+  });
 
-                const resultDiv = document.createElement('div');
-                resultDiv.className = 'result';
-                resultDiv.innerHTML = `
-                    <span class="emoji-big">${emoji}</span>
-                    <h2>${resultText}</h2>
-                    <p>${description}</p>
-                    <p style="margin-top:16px; font-size:14px; opacity:0.4;">
-                        Интернет: ${internetCount} · Гулянки: ${walkCount} · Нейтрально: ${neutralCount}
-                    </p>
-                    <button class="restart-btn" id="restartBtn">🔄 Пройти заново</button>
-                `;
-                document.querySelector('.container').appendChild(resultDiv);
-
-                document.getElementById('restartBtn').addEventListener('click', function() {
-                    location.reload();
-                });
-
-                isGameFinished = true;
-            }
-
-            // ---------- ИНИЦИАЛИЗАЦИЯ ----------
-            function init() {
-                showQuestion(0);
-            }
-
-            init();
-        })();
-    </script>
+  renderQuestion();
+</script>
 </body>
 </html>
